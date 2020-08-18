@@ -8,7 +8,6 @@ module.exports = {
     'import/no-extraneous-dependencies': 0,
     'import/no-named-as-default-member': 0,
     'import/default': 0,
-    'import/no-named-as-default-member': 0,
     'import/named': 0,
   },
 };

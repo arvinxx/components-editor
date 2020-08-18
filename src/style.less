@@ -1,0 +1,34 @@
+@import '~antd/es/style/themes/default';
+
+.container {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 55px);
+  position: relative;
+}
+
+.left {
+  background: @background-color-base;
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  z-index: 1;
+}
+.side {
+  padding: 0 24px 0 24px;
+  vertical-align: top;
+  width: 320px;
+  overflow: auto;
+  z-index: 100;
+  background: @white;
+  border-left: 1px solid @border-color-base;
+}
+
+.main {
+  margin-top: 64px;
+  padding: 24px;
+}
+.footer {
+  height: 55px;
+  bottom: 0;
+}

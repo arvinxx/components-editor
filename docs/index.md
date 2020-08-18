@@ -12,3 +12,5 @@ npm i @ant-design/pro-components-editor --save
 // or
 yarn add @ant-design/pro-components-editor
 ```
+
+<code src="./demo.tsx" />

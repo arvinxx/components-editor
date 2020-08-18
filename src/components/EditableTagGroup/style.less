@@ -1,0 +1,21 @@
+@import '~antd/es/style/themes/default';
+
+.addTag {
+  //margin-top: 8px;
+  background: @white;
+  border-style: dashed;
+  cursor: pointer;
+}
+.tag {
+  user-select: none;
+  :global {
+    .ant-tag {
+      margin-right: 2px;
+    }
+  }
+}
+.input {
+  width: 78px;
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,54 @@
+@import '~antd/es/style/themes/default';
+
+.title {
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.45);
+  padding: 12px 0;
+}
+.configTitle {
+  .title;
+  cursor: pointer;
+}
+
+.collapse {
+  :global {
+    .ant-collapse-item > .ant-collapse-header {
+      padding-bottom: 8px;
+      padding-top: 8px;
+      border-bottom: 1px solid @border-color-split;
+    }
+  }
+  .panel {
+    :global {
+      .ant-collapse-content-box {
+        padding: 0;
+        padding-top: 12px !important;
+        padding-bottom: 0 !important;
+      }
+      .ant-collapse-header {
+        padding-left: 24px;
+      }
+      .ant-collapse-header .ant-collapse-arrow {
+        left: 0;
+      }
+    }
+  }
+}
+
+.checkBox {
+  display: block;
+  margin-left: 0 !important;
+  margin-bottom: 8px;
+}
+
+.dataIndex {
+  display: flex;
+  align-items: center;
+}
+.editIcon {
+  cursor: pointer;
+  &:hover {
+    color: @primary-color;
+  }
+}

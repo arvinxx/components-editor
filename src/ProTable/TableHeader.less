@@ -1,0 +1,102 @@
+@import '~antd/es/style/themes/default';
+
+.handle {
+  position: absolute;
+  width: 8px;
+  height: 80%;
+  bottom: 5px;
+  border-radius: 2px;
+  right: -5px;
+  cursor: col-resize;
+  z-index: 1;
+  opacity: 0;
+  transition: all 0.3s ease;
+  &:hover {
+    opacity: 1;
+    background: @primary-5;
+  }
+}
+
+.resizing {
+  opacity: 1;
+  background: @primary-7;
+  &:hover {
+    background: @primary-7;
+  }
+}
+
+.active {
+  background: @primary-1 !important;
+  border: 2px solid @primary-color !important;
+}
+.add {
+  content: '';
+  position: absolute;
+  top: -20%;
+  display: block;
+  height: 120%;
+  width: 6px;
+  background: @primary-7;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.header {
+  transition: none !important;
+  border: 2px solid transparent;
+  user-select: none;
+  position: relative;
+
+  background: var(--table-header-bg) !important;
+  //:global {
+  //}
+}
+
+.activeHeader {
+  .active;
+}
+.leftAdd {
+  .add;
+  left: -2px;
+  z-index: 100;
+  &:hover {
+    opacity: 1;
+  }
+}
+.rightAdd {
+  .add;
+  right: -2px;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.plusIcon {
+  color: @primary-7;
+  position: absolute;
+  font-size: 22px;
+  top: -35%;
+  left: -8px;
+}
+
+.dragBar {
+  content: '';
+  position: absolute;
+  background: @primary-color;
+  left: -2px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  top: -12px;
+  display: block;
+  height: 12px;
+  width: 32px;
+
+  cursor: move;
+}
+
+.dragingLeft {
+  border-left: 4px dotted @blue-6;
+}
+.dragingRight {
+  border-right: 4px dotted @blue-6;
+}
