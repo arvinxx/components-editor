@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Button, Divider, Input, Modal } from 'antd';
-import EditableTagGroup from '../EditableTagGroup';
+import { Button, Input, Modal } from 'antd';
 import { Random } from 'mockjs';
-import { useSelector } from 'dva';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-import { useHandleTable } from '../../hook';
+
 import { TagType, ValueEnum } from 'typings/data/table';
+import { useProTableColumn } from '@/models/columns';
+import { useProTableInteract } from '@/models/interact';
+import { useProTableDataSource } from '@/models/dataSource';
 import PanelLayout from '../PanelLayout';
+import { useHandleTable } from '../../hook';
+import EditableTagGroup from '../EditableTagGroup';
 
 interface EnumFillProps<T> {
   /**
@@ -15,26 +17,26 @@ interface EnumFillProps<T> {
   title?: string;
   /**
    * 数据数组对象
-   **/
+   * */
   data: (string | TagType | ValueEnum)[];
   /**
    * 删除单个元素
-   **/
+   * */
   handleDelete: (enumIndex: number) => void;
   handleAdd: (text: string) => void;
   handleChange: (enumIndex: number, text: string) => void;
   /**
    * 显示填充按钮
-   **/
+   * */
   showButton: boolean;
 
   /**
    * 是否显示下拉菜单
-   **/
+   * */
   showDropdown?: boolean;
   /**
    * 调整 tag 颜色
-   **/
+   * */
   handleTagColorChange?: (tagIndex: number, color: string) => void;
 }
 
@@ -48,24 +50,24 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
   handleTagColorChange,
   title,
 }) => {
-  const { columns, activeHeader, dataSource, dataSourceType } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
+  const { handleTableColumn, getColumnByKey } = useProTableColumn();
+  const { interact } = useProTableInteract();
+  const {
+    dataSourceConfig,
+    mockDataSource,
+    handleMockCellText,
+  } = useProTableDataSource();
+  const { activeColumnKey } = interact;
+  const { dataSourceType } = dataSourceConfig;
 
   const [showModal, setShowModal] = useState(false);
-  const {
-    handleCellText,
-    handleColumnConfig,
-    handleColumnTagOrStatus,
-  } = useHandleTable();
+  const { handleColumnTagOrStatus } = useHandleTable();
 
-  const index = columns.findIndex((col) => col.key === activeHeader);
-  const column = columns[index];
+  const { column, index: colIndex } = getColumnByKey(activeColumnKey);
 
   const setColumnCellContent = (fn: () => string) => {
-    dataSource.forEach((_, index) => {
-      handleCellText(index, column.dataIndex, fn());
+    mockDataSource.forEach((_, index) => {
+      handleMockCellText(index, column.dataIndex, fn());
     });
   };
 
@@ -82,12 +84,12 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
           Object.assign(valueEnum, { [item?.index ?? item.text]: item });
         });
     }
-    handleColumnConfig(column.dataIndex, 'valueEnum', valueEnum);
+    handleTableColumn(column.dataIndex, 'valueEnum', valueEnum);
   };
 
   return (
     <>
-      <PanelLayout title={title ? title : '自定义填充'} marginTop={8}>
+      <PanelLayout title={title || '自定义填充'} marginTop={8}>
         <EditableTagGroup
           handleTextChange={handleChange}
           handleDelete={handleDelete}
@@ -101,7 +103,7 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
       {showButton ? (
         <PanelLayout title={' '}>
           <Button
-            size={'small'}
+            size="small"
             disabled={data.length === 0}
             onClick={() => {
               setValueEnum();
@@ -112,7 +114,7 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
           </Button>
           {dataSourceType === 'mock' ? null : (
             <Button
-              size={'small'}
+              size="small"
               disabled={data.length === 0}
               onClick={() => {
                 setShowModal(true);
@@ -142,13 +144,13 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
                   rightCol={20}
                   key={enumIndex}
                   title={state?.text}
-                  align={'middle'}
+                  align="middle"
                 >
                   <Input
                     value={state.index}
-                    placeholder={'请输入数据索引'}
+                    placeholder="请输入数据索引"
                     onChange={(e) => {
-                      handleColumnTagOrStatus(index, enumIndex, {
+                      handleColumnTagOrStatus(colIndex, enumIndex, {
                         index: e.target.value,
                       });
                     }}
@@ -164,11 +166,11 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
                   rightCol={20}
                   key={enumIndex}
                   title={item}
-                  align={'middle'}
+                  align="middle"
                 >
                   <Input
                     value={item}
-                    placeholder={'请输入数据索引'}
+                    placeholder="请输入数据索引"
                     onChange={(e) => {
                       // handleColumnTagOrStatus(index, enumIndex, {
                       //   index: e.target.value,

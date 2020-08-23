@@ -1,34 +1,35 @@
 import React, { FC } from 'react';
-import { Button, Space, Switch } from 'antd';
-import { useSelector } from 'dva';
-import { ConnectState, ProTableModelState } from '@/models/connect';
+import { Button, Switch } from 'antd';
+
 import { Random } from 'mockjs';
+import { useProTableColumn } from '@/models/columns';
+import { useProTableDataSource } from '@/models/dataSource';
+import { useProTableInteract } from '@/models/interact';
 import PanelLayout from '../PanelLayout';
-import { useHandleTable } from '../../hook';
 
 interface NumberFillConfigProps {
   single?: boolean;
 }
 const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
-  const { columns, activeHeader, dataSource } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
+  const { columns, handleTableColumn } = useProTableColumn();
+  const { interact } = useProTableInteract();
+  const { mockDataSource, handleMockCellText } = useProTableDataSource();
 
-  const index = columns.findIndex((col) => col.key === activeHeader);
+  const { activeColumnKey } = interact;
+
+  const index = columns.findIndex((col) => col.key === activeColumnKey);
   const column = columns[index];
-  const { handleCellText, handleColumnConfig } = useHandleTable();
 
   const setColumnCellContent = (fn: () => string) => {
-    if (single) {
-    } else
-      dataSource.forEach((_: any, index: number) => {
-        handleCellText(index, column.dataIndex, fn());
+    if (!single) {
+      mockDataSource.forEach((_: any, i: number) => {
+        handleMockCellText(i, column.dataIndex, fn());
       });
+    }
   };
 
   const setColumnConfig = (field: string, value: any) => {
-    handleColumnConfig(column.dataIndex, field, value);
+    handleTableColumn(column.dataIndex, field, value);
   };
 
   const title = () => {
@@ -47,6 +48,8 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return '填充金额';
       case 'percent':
         return '填充百分比';
+      default:
+        return '';
     }
   };
   const Content = () => {
@@ -57,10 +60,10 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
           <>
             <PanelLayout>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() =>
-                    Random.integer(100000000000, 1000000000000).toString()
+                    Random.integer(100000000000, 1000000000000).toString(),
                   );
                 }}
               >
@@ -69,7 +72,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
             </PanelLayout>
             <PanelLayout>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.ctitle());
                 }}
@@ -77,7 +80,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
                 短中文
               </Button>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.csentence());
                 }}
@@ -86,7 +89,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               </Button>
 
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.title());
                 }}
@@ -94,7 +97,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
                 短英文
               </Button>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.sentence());
                 }}
@@ -104,7 +107,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
             </PanelLayout>
             <PanelLayout>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.domain());
                 }}
@@ -112,7 +115,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
                 域名
               </Button>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.url('http'));
                 }}
@@ -120,7 +123,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
                 网址
               </Button>
               <Button
-                size={'small'}
+                size="small"
                 onClick={() => {
                   setColumnCellContent(() => Random.ip());
                 }}
@@ -135,7 +138,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.integer(0, 1000).toString());
               }}
@@ -143,10 +146,10 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               短数字
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() =>
-                  Random.integer(100000, 100000000000).toString()
+                  Random.integer(100000, 100000000000).toString(),
                 );
               }}
             >
@@ -158,7 +161,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.integer(0, 100).toString());
               }}
@@ -166,7 +169,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               整数
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.float(0, 100).toString());
               }}
@@ -174,7 +177,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               小数
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.float(0, 1000).toString());
               }}
@@ -187,7 +190,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.integer(0, 1000).toString());
               }}
@@ -195,17 +198,17 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               小额
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() =>
-                  Random.integer(100000, 100000000).toString()
+                  Random.integer(100000, 100000000).toString(),
                 );
               }}
             >
               大额
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => Random.float(0, 100).toString());
               }}
@@ -219,17 +222,17 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() =>
-                  Random.date('yyyy-MM-dd HH:mm:ss').toString()
+                  Random.date('yyyy-MM-dd HH:mm:ss').toString(),
                 );
               }}
             >
               随机日期
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => {
                   const year = new Date().getFullYear();
@@ -240,14 +243,14 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               近1年
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => {
                   const year = new Date().getFullYear();
                   const month = new Date().getUTCMonth();
 
                   return new Date(
-                    Random.date(`${year}-${month}-dd HH:mm:ss`)
+                    Random.date(`${year}-${month}-dd HH:mm:ss`),
                   ).toISOString();
                 });
               }}
@@ -260,17 +263,17 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() =>
-                  Random.date('yyyy-MM-dd HH:mm:ss').toString()
+                  Random.date('yyyy-MM-dd HH:mm:ss').toString(),
                 );
               }}
             >
               随机
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => {
                   const year = new Date().getFullYear();
@@ -281,7 +284,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
               近1年
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => {
                   const year = new Date().getFullYear();
@@ -298,7 +301,7 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
         return (
           <PanelLayout>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
                 setColumnCellContent(() => {
                   return Random.datetime().toString();
@@ -316,9 +319,9 @@ const ContentFill: FC<NumberFillConfigProps> = ({ single }) => {
   return (
     <>
       {column.valueType === 'text' ? (
-        <PanelLayout title={'链接状态'}>
+        <PanelLayout title="链接状态">
           <Switch
-            size={'small'}
+            size="small"
             checked={column && column!.isLink}
             onChange={(value) => {
               setColumnConfig('isLink', value);

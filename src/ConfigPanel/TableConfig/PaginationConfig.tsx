@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
 import { InputNumber, Radio, Space } from 'antd';
 import { InfoNote } from '@/components';
-import { useSelector } from 'dva';
-import { ConnectState, ProTableModelState } from '@/models/connect';
 
-import { CollapsePanel, PanelLayout } from '../index';
-import { useHandleTable } from '../../hook';
+import { useProTablePagination } from '@/models/pagination';
+import { CollapsePanel, PanelLayout } from '@/components'
 
 const bottomOptions = [
   { label: '左', value: 'bottomLeft' },
@@ -14,48 +12,37 @@ const bottomOptions = [
 ];
 
 const PaginationConfig: FC = () => {
-  const { config } = useSelector<ConnectState, ProTableModelState>(
-    (state) => state.protable
-  );
-  const { handleTableConfig, handleTablePagination } = useHandleTable();
-  const { pagination } = config;
-
+  const {
+    pagination,
+    showPagination,
+    setShowPagination,
+    handlePagination,
+  } = useProTablePagination();
   return (
     <CollapsePanel
-      panelKey={'pagination'}
-      title={'分页器'}
-      isActive={!!pagination}
+      panelKey="pagination"
+      title="分页器"
+      isActive={showPagination}
       onHandleSwitch={(isOpen) => {
-        if (isOpen) {
-          handleTablePagination({
-            position: ['bottomRight'],
-            total: (pagination && pagination.total) || 100,
-            size: 'default',
-          });
-        } else {
-          // 配置为禁用
-          handleTableConfig('pagination', isOpen);
-        }
+        setShowPagination(isOpen);
       }}
     >
-      <PanelLayout title={'位置'}>
+      <PanelLayout title="位置">
         <Radio.Group
-          size={'small'}
+          size="small"
           options={bottomOptions}
           value={pagination && pagination.position && pagination.position[0]}
           onChange={(e) => {
-            handleTablePagination({
-              position: [e.target.value],
-            });
+            handlePagination({ position: [e.target.value] });
           }}
         />
       </PanelLayout>
-      <PanelLayout title={'尺寸'}>
+      <PanelLayout title="尺寸">
         <Radio.Group
           name="size"
-          size={'small'}
+          size="small"
           onChange={(e) => {
-            handleTablePagination({
+            handlePagination({
               size: e.target.value,
             });
           }}
@@ -65,43 +52,39 @@ const PaginationConfig: FC = () => {
           <Radio value="small">小</Radio>
         </Radio.Group>
       </PanelLayout>
-      <PanelLayout title={'每页数量'}>
+      <PanelLayout title="每页数量">
         <InputNumber
           step={1}
-          size={'small'}
+          size="small"
           type="tel"
           placeholder="10"
           maxLength={30}
           name="pageSize"
           value={(pagination && pagination.pageSize) || 10}
           onChange={(value) => {
-            handleTablePagination({
+            handlePagination({
               pageSize: Number(value),
             });
           }}
         />
       </PanelLayout>
-      <PanelLayout title={'虚拟总量'}>
+      <PanelLayout title="虚拟总量">
         <Space>
           <InputNumber
             step={1}
-            size={'small'}
+            size="small"
             type="tel"
             placeholder="输入虚拟总量"
             maxLength={30}
             name="pageSize"
             value={(pagination && pagination.total) || undefined}
             onChange={(value) => {
-              handleTablePagination({
+              handlePagination({
                 total: Number(value),
               });
             }}
           />
-          <InfoNote
-            title={
-              '表格的虚拟总量,用于修改分页器的分页展示数量,和表格实际数量无关'
-            }
-          />
+          <InfoNote title="表格的虚拟总量,用于修改分页器的分页展示数量,和表格实际数量无关" />
         </Space>
       </PanelLayout>
     </CollapsePanel>

@@ -1,6 +1,7 @@
 import { resolve } from 'path';
+import { defineConfig } from 'umi';
 
-export default {
+export default defineConfig({
   title: 'ProComponents Editor',
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   mode: 'site',
@@ -32,4 +33,4 @@ export default {
     loading: '@ant-design/pro-skeleton',
   },
   hash: true,
-};
+});

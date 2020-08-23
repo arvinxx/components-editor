@@ -90,7 +90,7 @@ export interface TableModelType {
 /**
  * 列单元数据类型
  * */
-export type ValueType =
+export type ColumnValueType =
   | 'tag'
   | 'status'
   | 'enum'
@@ -155,7 +155,7 @@ export interface ColumnType {
    * 列单元数据
    * 文本类型下的数值类型
    * */
-  valueType: ValueType;
+  valueType: ColumnValueType;
   /**
    * 数值元组类型
    */

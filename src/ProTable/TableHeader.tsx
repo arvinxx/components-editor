@@ -10,15 +10,16 @@ import { Resizable } from 'react-resizable';
 import classnames from 'classnames';
 import { PlusCircleFilled } from '@ant-design/icons';
 import update from 'immutability-helper';
-import { useSelector } from 'dva';
+
 import { useDrag, useDrop } from 'react-dnd';
 
 import { CellType, ColumnType } from '@/typings/table';
 import { useThrottleFn } from '@umijs/hooks';
-import { useHandleTable } from '@/hook';
-import { ConnectState, ProTableModelState } from '@/models/connect';
 
 import { generateColumn } from '@/utils';
+import { useProTableInteract } from '@/models/interact';
+import { useProTableDataSource } from '@/models/dataSource';
+import { useProTableColumn } from '@/models/columns';
 import styles from './TableHeader.less';
 
 const type = 'DragableHeader';
@@ -47,14 +48,12 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
     ellipsis,
     ...restProps
   } = props;
-  const {
-    columns,
-    resizingIndex,
-    resizingWidth,
-    activeHeader,
-    dataSource,
-  } = useSelector<ConnectState, ProTableModelState>((state) => state.protable);
-  const { handleColumnConfig, handleTableState } = useHandleTable();
+
+  const { interact, handleTableInteract } = useProTableInteract();
+  const { mockDataSource, setMockDataSource } = useProTableDataSource();
+  const { columns, setColumns, handleTableColumn } = useProTableColumn();
+
+  const { activeColumnKey, resizingIndex, resizingWidth } = interact;
 
   const header = useRef<HTMLTableHeaderCellElement>(null);
   const dragBar = useRef<HTMLSpanElement>(null);
@@ -76,7 +75,7 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
    * 调整 dataSource
    */
   const adjustDataSource = (newColumns: ColumnType[]) => {
-    let newDataSource = dataSource.concat([]);
+    let newDataSource = mockDataSource.concat([]);
 
     for (let i = 0; i < newColumns.length; i += 1) {
       const newColumn = newColumns[i];
@@ -107,7 +106,7 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
     // 计算宽度
     const width = getStartWidth();
 
-    handleTableState({
+    handleTableInteract({
       resizingWidth: column?.width ? column.width : width,
     });
     setStartWidth(column?.width ? column.width : width);
@@ -121,7 +120,7 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
     // @ts-ignore
     const newWidth = startWidth + (e.screenX - startX);
 
-    handleTableState({ resizingWidth: newWidth });
+    handleTableInteract({ resizingWidth: newWidth });
   };
   const { run } = useThrottleFn(handleResize, 16);
 
@@ -132,12 +131,12 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
   const updateSize = (e: SyntheticEvent) => {
     const field = column?.widthType === 'number' ? 'width' : 'widthPercent';
 
-    handleTableState({ resizingIndex: '' });
+    handleTableInteract({ resizingIndex: '' });
     // @ts-ignore
     const newWidth = startWidth + (e.screenX - startX);
-    handleTableState({ resizingWidth: newWidth });
+    handleTableInteract({ resizingWidth: newWidth });
     if (column) {
-      handleColumnConfig(column.dataIndex, field, Number(newWidth?.toFixed(0)));
+      handleTableColumn(column.dataIndex, field, Number(newWidth?.toFixed(0)));
     }
   };
 
@@ -158,10 +157,8 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
     // 调整 dataSource
     const newDataSource = adjustDataSource(newColumns);
 
-    handleTableState({
-      columns: newColumns,
-      dataSource: newDataSource,
-    });
+    setColumns(newColumns);
+    setMockDataSource(newDataSource);
   };
 
   //* *****  表格拖拽  ********//
@@ -174,11 +171,8 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
           [hoverIndex, 0, dragRow],
         ],
       });
-
-      handleTableState({
-        columns: newColumns,
-        dataSource: adjustDataSource(newColumns),
-      });
+      setColumns(newColumns);
+      setMockDataSource(adjustDataSource(newColumns));
     },
     [columns],
   );
@@ -214,7 +208,7 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
   //* *****  表格拖拽  ********//
 
   const isResizing = resizingIndex === column?.dataIndex;
-  const isActive = activeHeader === column?.key;
+  const isActive = activeColumnKey === column?.key;
 
   return (
     <Resizable
@@ -236,16 +230,16 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
         />
       }
       onResize={run}
-      onResizeStart={(e) => {
+      onResizeStart={(e: { screenX: React.SetStateAction<number> }) => {
         // @ts-ignore
         setStartX(e.screenX);
         const width = getStartWidth();
-        handleTableState({ resizingWidth: width });
+        handleTableInteract({ resizingWidth: width });
         setStartWidth(column?.width ? column.width : width);
 
         if (column?.dataIndex) {
-          handleColumnConfig(column?.dataIndex, 'widthType', 'number');
-          handleTableState({ resizingIndex: column?.dataIndex });
+          handleTableColumn(column?.dataIndex, 'widthType', 'number');
+          handleTableInteract({ resizingIndex: column?.dataIndex });
         }
       }}
       onResizeStop={updateSize}

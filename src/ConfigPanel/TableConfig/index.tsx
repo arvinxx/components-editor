@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { useIntl } from 'umi';
-
+import { useIntl } from 'react-intl';
 import PaginationConfig from './PaginationConfig';
 import RowSelectionConfig from './RowSelectionConfig';
 import SearchConfig from './SearchConfig';

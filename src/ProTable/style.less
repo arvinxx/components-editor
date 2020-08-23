@@ -1,5 +1,8 @@
 @import '~antd/es/style/themes/default';
 
+body {
+  --table-header-bg: @background-color-light;
+}
 .cell {
   transition: none !important;
 }
@@ -7,4 +10,13 @@
 .activeCell {
   background: @primary-1 !important;
   border: 2px solid @primary-color !important;
+}
+
+.activeHeader {
+  background: @primary-1 !important;
+  border-left: 2px solid @primary-color !important;
+  border-right: 2px solid @primary-color !important;
+}
+.lastActiveHeader {
+  border-bottom: 2px solid @primary-color !important;
 }

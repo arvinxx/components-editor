@@ -1,35 +1,33 @@
 import React, { FC } from 'react';
 import { Checkbox, Input } from 'antd';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-import { useSelector } from 'dva';
 
-import { EditableTagGroup, CollapsePanel, PanelLayout } from '../index';
-import { useHandleTable } from '../../hook';
+import { useProTableToolBar } from '@/models/toolbar';
+import { EditableTagGroup, CollapsePanel, PanelLayout } from '@/components';
+
 import styles from './style.less';
 
 const ToolBarConfig: FC = () => {
-  const { config, showToolBar, showTitle } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
   const {
-    handleTableState,
+    showToolBar,
+    showTitle,
+    toolBarActions,
+    title,
+    setShowToolBar,
     handleToolBarActions,
     deleteToolBarActions,
     addToolBarActions,
-    handleTableConfig,
-  } = useHandleTable();
-  const { toolBarActions, title } = config;
+    setShowTitle,
+    setTitle,
+  } = useProTableToolBar();
 
   return (
     <CollapsePanel
       isActive={showToolBar}
       onHandleSwitch={(isActive) => {
-        console.log(isActive);
-        handleTableState({ showToolBar: isActive });
+        setShowToolBar(isActive);
       }}
-      title={'工具栏'}
-      panelKey={'toolbar'}
+      title="工具栏"
+      panelKey="toolbar"
     >
       <PanelLayout
         title={
@@ -38,7 +36,7 @@ const ToolBarConfig: FC = () => {
             checked={showTitle}
             name="title"
             onChange={(e) => {
-              handleTableState({ showTitle: e.target.checked });
+              setShowTitle(e.target.checked);
             }}
           >
             标题
@@ -47,17 +45,17 @@ const ToolBarConfig: FC = () => {
       >
         {!showTitle ? null : (
           <Input
-            size={'small'}
+            size="small"
             placeholder="请输入标题"
-            name="titleText"
+            name="title"
             value={title}
             onChange={(e) => {
-              handleTableConfig('title', e.target.value);
+              setTitle(e.target.value);
             }}
           />
         )}
       </PanelLayout>
-      <PanelLayout title={'操作项'}>
+      <PanelLayout title="操作项">
         <EditableTagGroup
           tags={toolBarActions}
           handleTextChange={(index, text) => {
@@ -69,7 +67,7 @@ const ToolBarConfig: FC = () => {
           handleAdd={(text) => {
             addToolBarActions(text);
           }}
-          type={'action'}
+          type="action"
           showDropdown
           handleTagColorChange={(index, type) => {
             handleToolBarActions(index, { type });

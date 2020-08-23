@@ -1,12 +1,12 @@
 import { DvaModel, Reducer, Effect } from '@/models/connect';
-import { RowType, TableModelType } from 'typings/data/table';
+import { TableModelType } from 'typings/data/table';
 import update from 'immutability-helper';
 
 import { getDefaultTableData } from '../utils';
 
 export interface ProTableModelState extends TableModelType {
-  activeHeader: string;
-  focusedCellKey: string;
+  activeColumnKey: string;
+  activeCellKey: string;
   /**
    * 正在缩放的列索引
    */
@@ -43,26 +43,6 @@ export interface ProTableModelState extends TableModelType {
    * 显示高级搜索框
    */
   showSearch: boolean;
-  /**
-   * 数据类型
-   */
-  dataSourceType: 'mock' | 'online';
-  /**
-   * 线上数据 url
-   */
-  onlineUrl?: string;
-  /**
-   * 需要预览的数据
-   */
-  previewData: RowType[];
-  /**
-   * 显示预览面板
-   */
-  showDataPreviewPanel: boolean;
-  /**
-   * 主动触发表格刷新
-   */
-  shouldRefreshData: boolean;
 }
 
 export interface TableModelStore extends DvaModel<ProTableModelState> {
@@ -79,7 +59,7 @@ export interface TableModelStore extends DvaModel<ProTableModelState> {
     deleteToolBarActions: Reducer<ProTableModelState>;
     handleToolBarActions: Reducer<ProTableModelState>;
     handleHeaderText: Reducer<ProTableModelState>;
-    handleColumnConfig: Reducer<ProTableModelState>;
+    handleTableColumn: Reducer<ProTableModelState>;
     handleColumnEnum: Reducer<ProTableModelState>;
     addColumnEnum: Reducer<ProTableModelState>;
     deleteColumnEnum: Reducer<ProTableModelState>;
@@ -94,10 +74,6 @@ const { dataSource, columns } = getDefaultTableData();
 const TableModel: TableModelStore = {
   namespace: 'protable',
   state: {
-    activeHeader: '',
-    focusedCellKey: '',
-    resizingWidth: 0,
-    resizingIndex: '',
     columns,
     dataSource,
     dataSourceType: 'mock',
@@ -141,30 +117,7 @@ const TableModel: TableModelStore = {
     setConfig(state, { payload }) {
       return { ...state, config: { ...state.config, ...payload } };
     },
-    /**
-     * 修改 Table 的 Pagination 参数
-     */
-    setTablePagination(state, { payload }) {
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          pagination: { ...state.config.pagination, ...payload },
-        },
-      };
-    },
-    /**
-     * 修改 Table 的 Search 参数
-     */
-    setTableSearch(state, { payload }) {
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          search: { ...state.config.search, ...payload },
-        },
-      };
-    },
+
     /**
      * 修改 Table 的 Pagination 参数
      */
@@ -179,86 +132,11 @@ const TableModel: TableModelStore = {
     },
 
     /**
-     * 给 Toolbar 工具列添加按钮
-     */
-    addToolBarActions(state, { payload }) {
-      const { text, type } = payload;
-      const toolBarActions = state.config.toolBarActions;
-      // 如果存在重复 不添加
-      const isExist = toolBarActions?.find((a) => a.text === text);
-      if (isExist) return state;
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          toolBarActions: toolBarActions?.concat([
-            { text, type: type ?? 'default' },
-          ]) || [{ text, type: type ?? 'default' }],
-        },
-      };
-    },
-    /**
-     * 删除Toolbar 工具列的按钮
-     */
-    deleteToolBarActions(state, { payload }) {
-      const { index } = payload;
-      const toolBarActions = state.config.toolBarActions;
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          toolBarActions: update(toolBarActions, { $splice: [[index, 1]] }),
-        },
-      };
-    },
-    /**
-     * 给 Toolbar 工具列添加按钮
-     */ handleToolBarActions(state, { payload }) {
-      const { index, text, type } = payload;
-      const toolBarActions = state.config.toolBarActions;
-      // 如果存在重复 不添加
-      const isExist = toolBarActions.find((a) => a.text === text);
-      if (isExist) return state;
-
-      // 修改文本或类型
-      let content = toolBarActions[index];
-      if (text) content.text = text;
-      if (type) content.type = type;
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          toolBarActions: update(toolBarActions, {
-            [index]: { $set: content },
-          }),
-        },
-      };
-    },
-    /**
-     * 修改单元格文本
-     */
-    setCellText(state, { payload }) {
-      const { col, row, content } = payload;
-      return {
-        ...state,
-        dataSource: update(state.dataSource, {
-          [row]: {
-            [col]: {
-              content: { $set: content },
-            },
-          },
-        }),
-      };
-    },
-    /**
      * 修改 Header 单元格文本
      */
     handleHeaderText(state, { payload }) {
       const index = state.columns.findIndex(
-        (col) => col.dataIndex === payload.dataIndex
+        (col) => col.dataIndex === payload.dataIndex,
       );
       return {
         ...state,
@@ -274,9 +152,9 @@ const TableModel: TableModelStore = {
     /**
      * 修改列配置
      */
-    handleColumnConfig(state, { payload }) {
+    handleTableColumn(state, { payload }) {
       const index = state.columns.findIndex(
-        (col) => col.dataIndex === payload.dataIndex
+        (col) => col.dataIndex === payload.dataIndex,
       );
       const { field, value } = payload;
       return {
@@ -411,18 +289,6 @@ const TableModel: TableModelStore = {
           },
         }),
       };
-    },
-
-    // *** 修改主题 *** //
-    handleTheme(state, { payload }) {
-      const { primaryColor, headerBG } = payload;
-      if (primaryColor) {
-        document.body.style.setProperty('--primary-color', primaryColor);
-      }
-      if (headerBG) {
-        document.body.style.setProperty('--table-header-bg', headerBG);
-      }
-      return { ...state, theme: { ...state.theme, ...payload } };
     },
   },
 };

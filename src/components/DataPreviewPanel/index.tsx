@@ -1,23 +1,26 @@
 import React, { FC, memo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Drawer, Radio, Space, Button } from 'antd';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-
-import { useHandleTable } from '@/hook';
-
 import ReactJson from 'react-json-view';
+import { useProTableDataSource } from '../../models/dataSource';
 
 const { Button: RadioButton, Group } = Radio;
 const ProTablePage: FC = memo(() => {
-  const table = useSelector<ConnectState, ProTableModelState>(
-    (state) => state.protable
-  );
+  const {
+    dataSourceConfig,
+    handleTableDataSourceConfig,
+  } = useProTableDataSource();
+
   const [index, setIndex] = useState(0);
 
   const [placement, setPlacement] = useState('left');
-  const { handleTableState } = useHandleTable();
 
-  const { showDataPreviewPanel, previewData } = table;
+  const {
+    showDataPreviewPanel,
+    onlineDataSource,
+    dataSourceType,
+  } = dataSourceConfig;
+
+  if (dataSourceType === 'mock') return <div />;
 
   return (
     <Drawer
@@ -26,21 +29,21 @@ const ProTablePage: FC = memo(() => {
       visible={showDataPreviewPanel}
       maskClosable={false}
       onClose={() => {
-        handleTableState({ showDataPreviewPanel: false });
+        handleTableDataSourceConfig({ showDataPreviewPanel: false });
       }}
       title={
         <div>
           数据预览
           <Group
-            size={'small'}
+            size="small"
             style={{ marginLeft: 16 }}
             value={placement}
             onChange={(e) => {
               setPlacement(e.target.value);
             }}
           >
-            <RadioButton value={'left'}>左</RadioButton>
-            <RadioButton value={'bottom'}>下</RadioButton>
+            <RadioButton value="left">左</RadioButton>
+            <RadioButton value="bottom">下</RadioButton>
           </Group>
         </div>
       }
@@ -48,16 +51,13 @@ const ProTablePage: FC = memo(() => {
       height={300}
       mask={false}
     >
-      {/*<Space style={{ marginBottom: 8 }}>*/}
-      {/*  <Button>刷新</Button>*/}
-      {/*</Space>*/}
-      {previewData ? (
+      {onlineDataSource.length === 0 ? null : (
         <>
           <div style={{ marginBottom: 16 }}>
-            共 {previewData.length} 条数据
+            共 {onlineDataSource?.length} 条数据
             <Space style={{ marginLeft: 16 }}>
               <Button
-                size={'small'}
+                size="small"
                 disabled={index - 1 < 0}
                 onClick={() => {
                   if (index - 1 >= 0) {
@@ -68,10 +68,10 @@ const ProTablePage: FC = memo(() => {
                 上一条
               </Button>
               <Button
-                size={'small'}
-                disabled={index + 1 >= previewData.length}
+                size="small"
+                disabled={index + 1 >= onlineDataSource.length}
                 onClick={() => {
-                  if (index + 1 < previewData.length) {
+                  if (index + 1 < onlineDataSource.length) {
                     setIndex(index + 1);
                   }
                 }}
@@ -84,10 +84,10 @@ const ProTablePage: FC = memo(() => {
             name={`第${index + 1}条数据`}
             collapseStringsAfterLength={22}
             enableClipboard={false}
-            src={previewData[index]}
+            src={onlineDataSource[index]}
           />
         </>
-      ) : null}
+      )}
     </Drawer>
   );
 });

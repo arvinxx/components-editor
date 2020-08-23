@@ -1,83 +1,96 @@
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
+import ProTable, { TableDropdown, ActionType } from '@ant-design/pro-table';
 import React, { FC, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+
 import { Badge, Space, Tag, Button } from 'antd';
-import { ConnectState, ProTableModelState } from '@/models/connect';
+
 import { useSize } from '@umijs/hooks';
 import request from 'umi-request';
 
-import { useHandleTable } from '@/hook';
 import { ValueEnum } from '@/typings/table';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { isEnum, notColumnData } from '@/utils';
 
-import { ActionType } from '@ant-design/pro-table/lib/Table';
 import { TablePaginationConfig } from 'antd/es/table';
-import { DataPreviewPanel } from '../components';
-import styles from './style.less';
+import { useProTablePagination } from '@/models/pagination';
+import { useProTableSearch } from '@/models/search';
+import { useProTableInteract } from '@/models/interact';
+import { useProTableConfig } from '@/models/config';
+import { useProTableDataSource } from '@/models/dataSource';
+import { useProTableColumn } from '@/models/columns';
+import { useProTableRowSelection } from '@/models/rowSelection';
+import { useProTableToolBar } from '@/models/toolbar';
 import TableHeader from './TableHeader';
+import styles from './style.less';
+import { DataPreviewPanel } from '@/components';
 
 const ProTablePage: FC = () => {
-  const table = useSelector<ConnectState, ProTableModelState>(
-    (state) => state.protable,
-  );
   const actionRef = useRef<ActionType>();
 
-  const { handleTableState, handleTableSearch } = useHandleTable();
   const [tableSize, setRef] = useSize<HTMLDivElement>();
-  useEffect(() => {
-    handleTableState({ tableTotalWidth: tableSize.width });
-  }, [tableSize.width]);
+
+  const { pagination, showPagination } = useProTablePagination();
+  const { rowSelection } = useProTableRowSelection();
+  const { showAlertRender } = useProTableRowSelection();
   const {
-    config,
-    columns,
-    dataSource,
-    tableWidth,
-    activeHeader,
-    focusedCellKey,
-    resizingWidth,
-    resizingIndex,
-    showAlertRender,
-    showTitle,
+    toolBarActions,
     showToolBar,
-    showSearch,
-    onlineUrl,
-    dataSourceType,
-    shouldRefreshData,
-  } = table;
+    showTitle,
+    title,
+  } = useProTableToolBar();
+
+  const { columns } = useProTableColumn();
+  const { config } = useProTableConfig();
+  const { interact, handleTableInteract } = useProTableInteract();
 
   const {
-    title,
-    footer,
-    footerText,
-    rowSelection,
-    bordered,
-    size,
-    widthValue,
-    loading,
     showHeader,
-    hasData,
-    pagination,
-    search,
-    toolBarActions,
+    widthType,
+    bordered,
+    width,
+    size,
+    showLoading,
+    showEmpty,
   } = config;
 
   useEffect(() => {
+    handleTableInteract({ tableTotalWidth: tableSize.width });
+  }, [tableSize.width]);
+
+  const {
+    dataSourceConfig,
+    mockDataSource,
+    handleTableDataSourceConfig,
+  } = useProTableDataSource();
+  const {
+    dataSourceType,
+    onlineDataSource,
+    onlineUrl,
+    shouldRefreshData,
+  } = dataSourceConfig;
+  const {
+    resizingWidth,
+    resizingIndex,
+    activeCellKey,
+    activeColumnKey,
+  } = interact;
+  const { search, showSearch, handleSearch } = useProTableSearch();
+  useEffect(() => {
     if (shouldRefreshData) {
       actionRef.current?.reload();
-      handleTableState({ shouldRefreshData: false });
+      handleTableDataSourceConfig({ shouldRefreshData: false });
     }
   }, [shouldRefreshData]);
 
-  let paginationConfig: TablePaginationConfig | false = false;
+  let paginationConfig: TablePaginationConfig;
   switch (dataSourceType) {
     case 'mock':
       paginationConfig = pagination!;
       break;
+    default:
     case 'online':
       if (pagination) {
-        const { total: _, ...res } = pagination;
-        paginationConfig = { ...res };
+        const { total, ...res } = pagination;
+        paginationConfig = res;
       }
       break;
   }
@@ -85,15 +98,15 @@ const ProTablePage: FC = () => {
     <div
       id="x-table"
       ref={setRef}
-      style={{ width: tableWidth === 'fixed' ? widthValue : undefined }}
+      style={{ width: widthType === 'fixed' ? width : undefined }}
     >
       <DataPreviewPanel />
       <ProTable
         actionRef={actionRef}
-        tableLayout={tableWidth}
+        tableLayout={widthType}
         headerTitle={showTitle ? title : undefined}
         dataSource={
-          dataSourceType === 'mock' || hasData ? dataSource : undefined
+          dataSourceType === 'online' || showEmpty ? undefined : mockDataSource
         }
         components={{
           header: {
@@ -101,20 +114,19 @@ const ProTablePage: FC = () => {
           },
         }}
         rowKey="key"
-        pagination={paginationConfig}
+        pagination={showPagination ? paginationConfig : false}
         bordered={bordered}
         search={
           showSearch
             ? {
                 ...search,
                 onCollapse: (collapsed: boolean) => {
-                  handleTableSearch({ collapsed });
+                  handleSearch({ collapsed });
                 },
               }
             : false
         }
-        loading={loading}
-        footer={footer ? () => <div>{footerText} </div> : undefined}
+        loading={showLoading}
         rowSelection={rowSelection}
         size={size}
         showHeader={showHeader}
@@ -147,7 +159,7 @@ const ProTablePage: FC = () => {
         }
         postData={(data) => {
           if (dataSourceType === 'online') {
-            handleTableState({ previewData: data });
+            handleTableDataSourceConfig({ onlineDataSource: data });
           }
           return data;
         }}
@@ -200,17 +212,17 @@ const ProTablePage: FC = () => {
             onHeaderCell: (column) => ({
               ...res,
               columnIndex: index,
-              active: activeHeader === column?.key,
+              active: activeColumnKey === column?.key,
               onClick: () => {
-                if (activeHeader === column?.key) {
-                  handleTableState({
-                    activeHeader: '',
-                    focusedCellKey: '',
+                if (activeColumnKey === column?.key) {
+                  handleTableInteract({
+                    activeCellKey: '',
+                    activeColumnKey: '',
                   });
                 } else {
-                  handleTableState({
-                    activeHeader: column?.key,
-                    focusedCellKey: '',
+                  handleTableInteract({
+                    activeColumnKey: column?.key,
+                    activeCellKey: '',
                   });
                 }
               },
@@ -223,19 +235,27 @@ const ProTablePage: FC = () => {
                     const item = items[col?.dataIndex];
                     return {
                       className: {
-                        [styles.activeCell]: focusedCellKey === item?.key,
-                        [styles.cell]: true,
+                        [styles.activeHeader]: activeColumnKey === col?.key,
+                        [styles.lastActiveHeader]:
+                          activeColumnKey === col?.key &&
+                          index &&
+                          index + 1 ===
+                            (pagination &&
+                            onlineDataSource.length >
+                              paginationConfig?.pageSize!
+                              ? paginationConfig?.pageSize
+                              : onlineDataSource.length),
                       },
                       onClick: () => {
-                        if (focusedCellKey === item.key) {
-                          handleTableState({
-                            activeHeader: '',
-                            focusedCellKey: '',
+                        if (activeCellKey === item.key) {
+                          handleTableInteract({
+                            activeColumnKey: '',
+                            activeCellKey: '',
                           });
                         } else {
-                          handleTableState({
-                            focusedCellKey: item.key,
-                            activeHeader: '',
+                          handleTableInteract({
+                            activeCellKey: item.key,
+                            activeColumnKey: '',
                           });
                         }
                       },
@@ -247,8 +267,8 @@ const ProTablePage: FC = () => {
                 case 'option':
                   return (
                     <Space>
-                      {col.actions.map((action, index) => (
-                        <a key={index} href="">
+                      {col.actions.map((action, i) => (
+                        <a key={i} href="">
                           {action}
                         </a>
                       ))}
@@ -274,11 +294,8 @@ const ProTablePage: FC = () => {
                   if (!content) {
                     return '';
                   }
-                  const { color, text } = content;
-                  if (!text) {
-                    return content;
-                  }
-                  return <Tag color={color}>{text}</Tag>;
+
+                  return <Tag color={content.color}>{content.text}</Tag>;
                 case 'status':
                   if (!content) {
                     return '';

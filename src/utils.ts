@@ -83,6 +83,7 @@ export const getDefaultTableData = () => {
   };
 };
 
+
 /**
  * 判断是否是元组类数据
  * @param type

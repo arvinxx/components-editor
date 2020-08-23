@@ -1,100 +1,97 @@
-import React, { ChangeEvent, FC, useState } from 'react';
-import { Col, Divider, Dropdown, InputNumber, Radio, Switch } from 'antd';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-import { useSelector } from 'dva';
+import React, { ChangeEvent, FC } from 'react';
+import { Divider, InputNumber, Radio, Switch } from 'antd';
+
 import { RadioChangeEvent } from 'antd/lib/radio/interface';
 
-import { CollapsePanel, PanelLayout, ColorPanel } from '../index';
-import { useHandleTable } from '../../hook';
+import { useProTableConfig } from '@/models/config';
+import { useProTableTheme } from '@/models/theme';
+import { CollapsePanel, PanelLayout, ColorPanel } from '@/components';
 
 const StyleConfig: FC = () => {
-  const { theme, config, tableWidth } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
-  const { handleTableConfig, handleTableState } = useHandleTable();
+  const { config, handleTableConfig } = useProTableConfig();
+  const { theme } = useProTableTheme();
 
-  const { size, widthValue, bordered, showHeader } = config;
+  const { size, width, bordered, widthType, showHeader } = config;
 
   const handleInput = (key: string) => (
-    e: ChangeEvent<HTMLInputElement> | RadioChangeEvent
+    e: ChangeEvent<HTMLInputElement> | RadioChangeEvent,
   ) => {
-    handleTableConfig(key, e.target.value);
+    handleTableConfig({ [key]: e.target.value });
   };
 
   return (
     <CollapsePanel
-      title={'表格样式'}
-      panelKey={'style'}
+      title="表格样式"
+      panelKey="style"
       defaultExpanded
       hideButton
-      isActive={true}
+      isActive
     >
-      <PanelLayout title={'尺寸'}>
+      <PanelLayout title="尺寸">
         <Radio.Group name="size" onChange={handleInput('size')} value={size}>
           <Radio value="large">大</Radio>
           <Radio value="middle">中</Radio>
           <Radio value="small">小</Radio>
         </Radio.Group>
       </PanelLayout>
-      <PanelLayout title={'总宽度'}>
+      <PanelLayout title="总宽度">
         <Radio.Group
-          name="tableWidth"
+          name="widthType"
           onChange={(e) => {
-            handleTableState({ tableWidth: e.target.value });
+            handleTableConfig({ widthType: e.target.value });
           }}
-          value={tableWidth}
+          value={widthType}
         >
           <Radio value="auto">自动</Radio>
           <Radio value="fixed">
             固定宽度
-            {tableWidth === 'auto' ? null : (
+            {widthType === 'auto' ? null : (
               <InputNumber
                 style={{
                   width: 80,
                   marginLeft: 8,
                 }}
-                size={'small'}
+                size="small"
                 step={10}
                 type="tel"
                 placeholder="表格宽度"
                 maxLength={25}
-                name="widthValue"
-                value={widthValue}
+                name="width"
+                value={width}
                 onChange={(value) => {
-                  handleTableConfig('widthValue', value);
+                  handleTableConfig({ width: value });
                 }}
               />
             )}
           </Radio>
         </Radio.Group>
       </PanelLayout>
-      <PanelLayout title={'边框'}>
+      <PanelLayout title="边框">
         <Switch
-          size={'small'}
+          size="small"
           checked={bordered}
           onChange={(checked) => {
-            handleTableConfig('bordered', checked);
+            handleTableConfig({ bordered: checked });
           }}
         />
       </PanelLayout>
-      <PanelLayout title={'表头'}>
+      <PanelLayout title="表头">
         <Switch
-          size={'small'}
+          size="small"
           checked={showHeader}
           onChange={(checked) => {
-            handleTableConfig('showHeader', checked);
+            handleTableConfig({ showHeader: checked });
           }}
         />
       </PanelLayout>
       <Divider style={{ margin: '16px 0' }} />
-      {/*<PanelLayout title={'主色'}>*/}
-      {/*  <ColorPanel color={theme.primaryColor} colorKey={'primaryColor'} />*/}
-      {/*</PanelLayout>*/}
-      <PanelLayout title={'表头背景'}>
+      {/* <PanelLayout title={'主色'}> */}
+      {/*  <ColorPanel color={theme.primaryColor} colorKey={'primaryColor'} /> */}
+      {/* </PanelLayout> */}
+      <PanelLayout title="表头背景">
         <ColorPanel
           color={theme.headerBG}
-          colorKey={'headerBG'}
+          colorKey="headerBG"
           presetColors={[
             { color: '#fafafa', title: '默认' },
             { color: '#fff', title: '纯色' },

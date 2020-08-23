@@ -9,5 +9,6 @@ module.exports = {
     'import/no-named-as-default-member': 0,
     'import/default': 0,
     'import/named': 0,
+    'no-param-reassign': 0,
   },
 };

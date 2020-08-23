@@ -1,15 +1,14 @@
 import React, { FC } from 'react';
 import ContentFill from '../ContentFill/ContentFill';
 import EnumFillConfig from './EnumFillConfig';
-
-import { ColumnType } from 'typings/data/table';
+import { ColumnType } from '../../models/columns';
 
 interface DataFillPanelProps {
   column: ColumnType;
   columnIndex: number;
 }
 
-const DataFillPanel: FC<DataFillPanelProps> = ({ column, columnIndex }) => {
+const DataFillPanel: FC<DataFillPanelProps> = ({ column }) => {
   switch (column.valueType) {
     // 文本类型
     case 'text':

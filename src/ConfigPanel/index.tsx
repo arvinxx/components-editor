@@ -1,40 +1,45 @@
-import React, { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ConnectState, ProTableModelState } from '@/models/connect';
+import React, { FC, Ref } from 'react';
+import { Drawer } from 'antd';
+import { useProTableInteract } from '@/models/interact';
 
-import TableConfig from '@/components/TableConfig';
-import HeaderConfig from '@/components/HeaderConfig';
+import TableConfig from './TableConfig';
+import HeaderConfig from './HeaderConfig';
 import CellConfig from './CellConfig';
 
-const ConfigPanel: FC = () => {
-  const dispatch = useDispatch();
-  const { focusedCellKey, activeHeader } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
+type GetContainerFunc = () => HTMLElement;
 
-  if (focusedCellKey === '' && activeHeader === '') {
-    return <TableConfig />;
-  }
+export interface ConfigPanelProps {
+  drawer?: boolean;
+  visible: boolean;
+  getContainer?: string | HTMLElement | GetContainerFunc | false;
+}
+const ConfigPanel: FC<ConfigPanelProps> = ({ visible = true, container }) => {
+  const PanelContent = () => {
+    const { interact, handleTableInteract } = useProTableInteract();
 
-  return activeHeader !== '' ? (
-    <HeaderConfig
-      onBack={() => {
-        dispatch({
-          type: 'protable/save',
-          payload: { activeHeader: '', focusedCellKey: '' },
-        });
-      }}
-    />
-  ) : (
-    <CellConfig
-      onBack={() => {
-        dispatch({
-          type: 'protable/save',
-          payload: { activeHeader: '', focusedCellKey: '' },
-        });
-      }}
-    />
+    const { activeColumnKey, activeCellKey } = interact;
+    if (activeCellKey === '' && activeColumnKey === '') {
+      return <TableConfig />;
+    }
+
+    return activeColumnKey !== '' ? (
+      <HeaderConfig
+        onBack={() => {
+          handleTableInteract({ activeColumnKey: '', activeCellKey: '' });
+        }}
+      />
+    ) : (
+      <CellConfig
+        onBack={() => {
+          handleTableInteract({ activeColumnKey: '', activeCellKey: '' });
+        }}
+      />
+    );
+  };
+  return (
+    <Drawer width={320} visible={visible} mask={false} getContainer={container}>
+      <PanelContent />
+    </Drawer>
   );
 };
 

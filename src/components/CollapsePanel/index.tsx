@@ -41,7 +41,7 @@ const CollapsePanel: FC<CollapsePanelProps> = ({
   defaultExpanded,
 }) => {
   const [openPanelKey, setOpenPanelKey] = useState<string[]>(
-    defaultExpanded ? [panelKey] : []
+    defaultExpanded ? [panelKey] : [],
   );
 
   useEffect(() => {
@@ -68,10 +68,10 @@ const CollapsePanel: FC<CollapsePanelProps> = ({
         extra={
           hideButton ? null : (
             <Switch
-              size={'small'}
+              size="small"
               checked={isActive}
               onChange={(isOpen) => {
-                onHandleSwitch && onHandleSwitch(isOpen);
+                if (onHandleSwitch) onHandleSwitch(isOpen);
                 setOpenPanelKey(isOpen ? [panelKey] : []);
               }}
             />

@@ -7,15 +7,15 @@ import PanelLayout from '../PanelLayout';
 import { Switch } from 'antd';
 
 const EnumFillConfig: FC = () => {
-  const { columns, activeHeader } = useSelector<
+  const { columns, activeColumnKey } = useSelector<
     ConnectState,
     ProTableModelState
   >((state) => state.protable);
 
-  const index = columns.findIndex((col) => col.key === activeHeader);
+  const index = columns.findIndex((col) => col.key === activeColumnKey);
   const column = columns[index];
   const {
-    handleColumnConfig,
+    handleTableColumn,
     deleteColumnEnum,
     addColumnEnum,
     handleColumnTagOrStatus,
@@ -107,7 +107,7 @@ const EnumFillConfig: FC = () => {
             size={'small'}
             checked={column.showActionEllipsis}
             onClick={() => {
-              handleColumnConfig(
+              handleTableColumn(
                 column.dataIndex,
                 'showActionEllipsis',
                 !column.showActionEllipsis

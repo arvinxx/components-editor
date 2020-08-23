@@ -1,40 +1,40 @@
-import React, { FC, useState } from 'react';
-import { Button, Input, InputNumber, Radio, Switch, Drawer, Space } from 'antd';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-import { useSelector } from 'dva';
-import { CheckOutlined } from '@ant-design/icons';
+import React, { FC } from 'react';
+import { Button, Input, InputNumber, Radio, Switch } from 'antd';
 
-import { CollapsePanel, PanelLayout } from '../index';
-import { useHandleTable } from '../../hook';
-import { ColumnType } from 'typings/data/table';
 import { generateColumn, generateRow } from '@/utils';
+import { useProTableConfig } from '@/models/config';
+import { useProTableDataSource } from '@/models/dataSource';
+import { useProTableColumn, ColumnType } from '@/models/columns';
+
+import { CollapsePanel, PanelLayout } from '@/components';
 
 const DataSourceConfig: FC = () => {
+  const { config, handleTableConfig } = useProTableConfig();
   const {
-    dataSourceType,
-    config,
-    dataSource,
-    columns,
-    onlineUrl,
-  } = useSelector<ConnectState, ProTableModelState>((state) => state.protable);
-  const { handleTableConfig, handleTableState } = useHandleTable();
-  const { loading, hasData } = config;
+    dataSourceConfig,
+    mockDataSource,
+    handleTableDataSourceConfig,
+  } = useProTableDataSource();
+  const { columns, setColumns } = useProTableColumn();
+  const { dataSourceType, onlineUrl } = dataSourceConfig;
+
+  const { showLoading, showEmpty } = config;
 
   /**
    * 添加新的列
    * @param {number} newColumnNum 添加的列数
-   **/
+   * */
   const addNewColumns = (newColumnNum: number) => {
-    let newColumns = columns.concat([]);
-    let newDataSource = dataSource.concat([]);
-    for (let i = columns.length; i < Number(newColumnNum); i++) {
+    const newColumns = columns.concat([]);
+    let newDataSource = mockDataSource.concat([]);
+    for (let i = columns.length; i < Number(newColumnNum); i += 1) {
       const columnIndex = i.toString();
       const newColumn = generateColumn({ columnIndex });
       newDataSource = newDataSource.map((row, rowIndex) => {
         Object.assign(row, {
           [newColumn.dataIndex]: {
             content: '----',
-            key: rowIndex + '-' + columnIndex,
+            key: `${rowIndex}-${columnIndex}`,
           },
         });
         return row;
@@ -42,9 +42,9 @@ const DataSourceConfig: FC = () => {
       newColumns.push(newColumn);
     }
 
-    handleTableState({
-      columns: newColumns,
-      dataSource: newDataSource,
+    setColumns(newColumns);
+    handleTableDataSourceConfig({
+      mockDataSource: newDataSource,
     });
   };
 
@@ -52,22 +52,21 @@ const DataSourceConfig: FC = () => {
    * 主动触发表格刷新
    */
   const updateData = () => {
-    handleTableState({ shouldRefreshData: true });
+    handleTableDataSourceConfig({ shouldRefreshData: true });
   };
 
   return (
     <CollapsePanel
       isActive
-      panelKey={'dataSource'}
-      title={'数据源'}
+      panelKey="dataSource"
+      title="数据源"
       hideButton
       defaultExpanded
     >
-      <PanelLayout title={'数据类型'}>
+      <PanelLayout title="数据类型">
         <Radio.Group
-          name="tableWidth"
           onChange={(e) => {
-            handleTableState({ dataSourceType: e.target.value });
+            handleTableDataSourceConfig({ dataSourceType: e.target.value });
             updateData();
           }}
           value={dataSourceType}
@@ -78,13 +77,13 @@ const DataSourceConfig: FC = () => {
       </PanelLayout>
       {dataSourceType === 'online' ? (
         <>
-          <PanelLayout title={'请求网址'}>
+          <PanelLayout title="请求网址">
             <Input
-              size={'small'}
+              size="small"
               placeholder="xxx.com/api"
               value={onlineUrl}
               onChange={(e) => {
-                handleTableState({
+                handleTableDataSourceConfig({
                   onlineUrl: e.target.value,
                 });
               }}
@@ -92,13 +91,13 @@ const DataSourceConfig: FC = () => {
             />
           </PanelLayout>
           <PanelLayout title={' '}>
-            <Button size={'small'} onClick={updateData}>
+            <Button size="small" onClick={updateData}>
               刷新
             </Button>
             <Button
-              size={'small'}
+              size="small"
               onClick={() => {
-                handleTableState({ showDataPreviewPanel: true });
+                handleTableDataSourceConfig({ showDataPreviewPanel: true });
               }}
             >
               预览接口
@@ -107,10 +106,10 @@ const DataSourceConfig: FC = () => {
         </>
       ) : (
         <>
-          <PanelLayout title={'总列数'}>
+          <PanelLayout title="总列数">
             <InputNumber
               step={1}
-              size={'small'}
+              size="small"
               type="tel"
               placeholder="10"
               minLength={1}
@@ -127,70 +126,68 @@ const DataSourceConfig: FC = () => {
                   addNewColumns(numberValue);
                 } else {
                   // 删除列数
-                  handleTableState({
-                    columns: columns.splice(0, numberValue),
-                  });
+                  setColumns(columns.splice(0, numberValue));
                 }
               }}
             />
           </PanelLayout>
-          <PanelLayout title={'总行数'}>
+          <PanelLayout title="总行数">
             <InputNumber
               step={1}
-              size={'small'}
+              size="small"
               type="tel"
               placeholder="10"
               maxLength={30}
               name="pageSize"
-              value={dataSource.length || 10}
+              value={mockDataSource.length || 10}
               onChange={(value) => {
                 if (!value) return;
 
                 // 如果数量少于已有的 则减少行数
-                if (value < dataSource.length) {
-                  handleTableState({
-                    dataSource: dataSource.slice(0, Number(value)),
+                if (value < mockDataSource.length) {
+                  handleTableDataSourceConfig({
+                    mockDataSource: mockDataSource.slice(0, Number(value)),
                   });
                 }
                 // 不然就新增行
                 else {
                   const newColumns: ColumnType[] = [];
                   const newRows = [];
-                  for (let i = 0; i < columns.length; i++) {
+                  for (let i = 0; i < columns.length; i += 1) {
                     newColumns.push(
                       generateColumn({
                         dataIndex: columns[i].dataIndex,
                         columnIndex: i.toString(),
-                      })
+                      }),
                     );
                   }
-                  for (let i = dataSource.length; i < value; i++) {
+                  for (let i = mockDataSource.length; i < value; i += 1) {
                     newRows.push(
-                      generateRow(newColumns, { rowIndex: i.toString() })
+                      generateRow(newColumns, { rowIndex: i.toString() }),
                     );
                   }
-                  handleTableState({
-                    dataSource: dataSource.concat(newRows),
+                  handleTableDataSourceConfig({
+                    mockDataSource: mockDataSource.concat(newRows),
                   });
                 }
               }}
             />
           </PanelLayout>
-          <PanelLayout title={'空数据'}>
+          <PanelLayout title="空数据">
             <Switch
-              size={'small'}
-              checked={!hasData}
+              size="small"
+              checked={showEmpty}
               onChange={(checked) => {
-                handleTableConfig('hasData', !checked);
+                handleTableConfig({ showEmpty: checked });
               }}
             />
           </PanelLayout>
-          <PanelLayout title={'加载中'}>
+          <PanelLayout title="加载中">
             <Switch
-              size={'small'}
-              checked={loading}
+              size="small"
+              checked={showLoading}
               onChange={(checked) => {
-                handleTableConfig('loading', checked);
+                handleTableConfig({ showLoading: checked });
               }}
             />
           </PanelLayout>
