@@ -14,11 +14,7 @@ const ProTablePage: FC = memo(() => {
 
   const [placement, setPlacement] = useState('left');
 
-  const {
-    showDataPreviewPanel,
-    onlineDataSource,
-    dataSourceType,
-  } = dataSourceConfig;
+  const { onlineDataSource, dataSourceType } = dataSourceConfig;
 
   if (dataSourceType === 'mock') return <div />;
 
@@ -26,7 +22,7 @@ const ProTablePage: FC = memo(() => {
     <Drawer
       // @ts-ignore
       placement={placement}
-      visible={showDataPreviewPanel}
+      visible={dataSourceConfig.showDataPreviewPanel}
       maskClosable={false}
       onClose={() => {
         handleTableDataSourceConfig({ showDataPreviewPanel: false });
@@ -51,7 +47,7 @@ const ProTablePage: FC = memo(() => {
       height={300}
       mask={false}
     >
-      {onlineDataSource.length === 0 ? null : (
+      {onlineDataSource && onlineDataSource.length === 0 ? null : (
         <>
           <div style={{ marginBottom: 16 }}>
             共 {onlineDataSource?.length} 条数据

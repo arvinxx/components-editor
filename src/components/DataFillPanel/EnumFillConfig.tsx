@@ -1,40 +1,38 @@
 import React, { FC } from 'react';
-import { useSelector } from 'dva';
-import { ConnectState, ProTableModelState } from '@/models/connect';
-import { useHandleTable } from '@/hook';
-import EnumFill from '../ContentFill/EnumFill';
-import PanelLayout from '../PanelLayout';
 import { Switch } from 'antd';
+import { useProTableColumn } from '@/models/columns';
+import { useProTableInteract } from '@/models/interact';
+import PanelLayout from '../PanelLayout';
+import EnumFill from '../ContentFill/EnumFill';
 
 const EnumFillConfig: FC = () => {
-  const { columns, activeColumnKey } = useSelector<
-    ConnectState,
-    ProTableModelState
-  >((state) => state.protable);
-
-  const index = columns.findIndex((col) => col.key === activeColumnKey);
-  const column = columns[index];
   const {
+    getColumnByKey,
     handleTableColumn,
     deleteColumnEnum,
     addColumnEnum,
     handleColumnTagOrStatus,
-  } = useHandleTable();
+  } = useProTableColumn();
+  const { interact } = useProTableInteract();
+  const { activeColumnKey } = interact;
+
+  const { column, index } = getColumnByKey(activeColumnKey);
+
   /**
    * 删除文本标签
-   **/
+   * */
   const handleDeleteEnum = (tagIndex: number) => {
     deleteColumnEnum(index, tagIndex);
   };
   /**
    * 添加文本标签
-   **/
+   * */
   const handleAddEnum = (text: string) => {
     addColumnEnum(index, text);
   };
   /**
    * 修改文本标签
-   **/
+   * */
   const handleChangeEnum = (tagIndex: number, text: string) => {
     handleColumnTagOrStatus(index, tagIndex, { text });
   };
@@ -59,6 +57,8 @@ const EnumFillConfig: FC = () => {
 
   const title = () => {
     switch (column.valueType) {
+      default:
+        return '';
       case 'tag':
         return '填充标签';
       case 'status':
@@ -83,6 +83,16 @@ const EnumFillConfig: FC = () => {
     }
   };
 
+  const handleTagColorChangeFn = () => {
+    switch (column.valueType) {
+      case 'tag':
+        return handleTagColorChange;
+      case 'status':
+        return handleStatusChange;
+      default:
+        return undefined;
+    }
+  };
   return (
     <>
       <EnumFill
@@ -93,24 +103,18 @@ const EnumFillConfig: FC = () => {
         data={data()}
         showButton={column.valueType !== 'option'}
         showDropdown={['tag', 'status'].includes(column.valueType)}
-        handleTagColorChange={
-          column.valueType === 'tag'
-            ? handleTagColorChange
-            : column.valueType === 'status'
-            ? handleStatusChange
-            : undefined
-        }
+        handleTagColorChange={handleTagColorChangeFn()}
       />
       {column.valueType === 'option' ? (
-        <PanelLayout title={'显示省略'}>
+        <PanelLayout title="显示省略">
           <Switch
-            size={'small'}
+            size="small"
             checked={column.showActionEllipsis}
             onClick={() => {
               handleTableColumn(
                 column.dataIndex,
                 'showActionEllipsis',
-                !column.showActionEllipsis
+                !column.showActionEllipsis,
               );
             }}
           />

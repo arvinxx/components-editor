@@ -1,7 +1,12 @@
-import { CellType } from '@/typings/table';
-import { getDefaultTableData } from '@/utils';
+import { TagType } from '@/typings/table';
+
 import update from 'immutability-helper';
 import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
+
+export interface CellType {
+  key: string;
+  content: string | TagType;
+}
 
 export interface RowType {
   key: string;

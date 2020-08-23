@@ -7,7 +7,7 @@ import { useProTableColumn } from '@/models/columns';
 import { useProTableInteract } from '@/models/interact';
 import { useProTableDataSource } from '@/models/dataSource';
 import PanelLayout from '../PanelLayout';
-import { useHandleTable } from '../../hook';
+
 import EditableTagGroup from '../EditableTagGroup';
 
 interface EnumFillProps<T> {
@@ -50,7 +50,11 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
   handleTagColorChange,
   title,
 }) => {
-  const { handleTableColumn, getColumnByKey } = useProTableColumn();
+  const {
+    handleTableColumn,
+    getColumnByKey,
+    handleColumnTagOrStatus,
+  } = useProTableColumn();
   const { interact } = useProTableInteract();
   const {
     dataSourceConfig,
@@ -61,7 +65,6 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
   const { dataSourceType } = dataSourceConfig;
 
   const [showModal, setShowModal] = useState(false);
-  const { handleColumnTagOrStatus } = useHandleTable();
 
   const { column, index: colIndex } = getColumnByKey(activeColumnKey);
 

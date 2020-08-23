@@ -143,6 +143,46 @@ export interface ProtableConfigHook {
    * @param key
    */
   getColumnByKey: (key: string) => { column: ColumnType; index: number };
+
+  /**
+   * 删除 Column 的 enum 对象
+   * @param columnIndex
+   * @param enumIndex
+   */
+  deleteColumnEnum: (columnIndex: number, enumIndex: number) => void;
+  /**
+   * 添加 enum 对象
+   * @param columnIndex
+   * @param text
+   */
+  addColumnEnum: (columnIndex: number, text: string) => void;
+  /**
+   * 修改 列的 enum 值
+   * @param columnIndex
+   * @param enumIndex
+   * @param text
+   */
+  handleColumnEnum: (
+    columnIndex: number,
+    enumIndex: number,
+    text: string,
+  ) => void;
+  /**
+   * 修改 列的 对象值
+   * @param columnIndex
+   * @param enumIndex
+   * @param payload
+   */
+  handleColumnTagOrStatus: (
+    columnIndex: number,
+    enumIndex: number,
+    payload: {
+      text?: string;
+      color?: string;
+      status?: string;
+      index?: string;
+    },
+  ) => void;
 }
 
 /**
