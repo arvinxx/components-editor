@@ -1,5 +1,4 @@
 import { ButtonType } from 'antd/es/button';
-import update from 'immutability-helper';
 import { createStore, PROTABLE_NAMESPACE } from './utils';
 
 export type ActionType = { text: string; type: ButtonType };
@@ -24,44 +23,16 @@ export interface ProTableToolBarState {
 }
 
 export const proTableRowSelectionState: ProTableToolBarState = {
-  showTitle: false,
-  showToolBar: false,
+  showTitle: true,
+  showToolBar: true,
   title: '表格标题',
   toolBarActions: [],
 };
 
 /**
- * 返回的 Hooks 方法
- */
-export interface ToolBarHook extends ProTableToolBarState {
-  setShowTitle: (show: boolean) => void;
-  setShowToolBar: (show: boolean) => void;
-  setTitle: (title: string) => void;
-  setToolBarActions: (toolBar: ActionType[]) => void;
-  /**
-   * 给 Toolbar 工具列添加按钮
-   */
-  addToolBarActions: (text: string, type?: ButtonType) => void;
-  /**
-   * 删除 ToolBar 操作按钮
-   * @param index
-   */
-  deleteToolBarActions: (index: number) => void;
-  /**
-   * 修改 ToolBar 操作按钮
-   * @param index
-   * @param payload
-   */
-  handleToolBarActions: (
-    index: number,
-    payload: { text?: string; type?: ButtonType },
-  ) => void;
-}
-
-/**
  * ProTable 的分页器 Model
  */
-export const useProTableToolBar = (): ToolBarHook => {
+export const useProTableToolBar = () => {
   const { useStore, mutate } = createStore<keyof ProTableToolBarState>(
     PROTABLE_NAMESPACE,
   );
@@ -91,7 +62,10 @@ export const useProTableToolBar = (): ToolBarHook => {
     setShowToolBar,
     toolBarActions,
     setToolBarActions,
-    addToolBarActions(text, type) {
+    /**
+     * 给 Toolbar 工具列添加按钮
+     */
+    addToolBarActions(text: string, type?: ButtonType) {
       mutate('toolBarActions', (state: ActionType[]) => {
         // 如果存在重复 不添加
         const isExist = state?.find((a) => a.text === text);
@@ -103,26 +77,33 @@ export const useProTableToolBar = (): ToolBarHook => {
         );
       });
     },
-    deleteToolBarActions(index) {
+    /**
+     * 删除 ToolBar 操作按钮
+     * @param index
+     */
+    deleteToolBarActions(index: number) {
       mutate('toolBarActions', (state: ActionType[]) => {
-        return update(state, { $splice: [[index, 1]] });
+        state.splice(index, 1);
       });
     },
-
-    handleToolBarActions(index, { text, type }) {
+    /**
+     * 修改 ToolBar 操作按钮
+     * @param index
+     * @param payload
+     */
+    handleToolBarActions(index: number, { text, type }:{ text?: string; type?: ButtonType }) {
       mutate('toolBarActions', (state: ActionType[]) => {
         // 如果存在重复 不添加
         const isExist = state.find((a) => a.text === text);
-        if (isExist) return state;
+        if (isExist) return ;
 
         // 修改文本或类型
         const content = state[index];
         if (text) content.text = text;
         if (type) content.type = type;
 
-        return update(state, {
-          [index]: { $set: content },
-        });
+        state[index]=content
+
       });
     },
   };

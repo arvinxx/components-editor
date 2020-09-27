@@ -1,4 +1,4 @@
-import { useStore, mutate } from 'stook';
+import { useStore, mutate, getState } from 'stook';
 import { getDefaultTableData } from '@/utils';
 
 /**
@@ -9,6 +9,7 @@ export const createStore = <K = string>(namespace: string) => {
   return {
     useStore: <V = any>(key: K, value?: V) =>
       useStore(`${namespace}/${key}`, value),
+    getState: (key: K) => getState(`${namespace}/${key}`),
     mutate: <S>(key: K, stateOrFn: MutateState<S>) =>
       mutate(`${namespace}/${key}`, stateOrFn),
   };

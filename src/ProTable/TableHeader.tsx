@@ -9,7 +9,7 @@ import React, {
 import { Resizable } from 'react-resizable';
 import classnames from 'classnames';
 import { PlusCircleFilled } from '@ant-design/icons';
-import update from 'immutability-helper';
+
 
 import { useDrag, useDrop } from 'react-dnd';
 
@@ -165,12 +165,12 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
   const moveColumn = useCallback(
     (dragIndex, hoverIndex) => {
       const dragRow = columns[dragIndex];
-      const newColumns = update(columns, {
-        $splice: [
+      const newColumns = columns.concat([]);
+       newColumns.splice( [
           [dragIndex, 1],
           [hoverIndex, 0, dragRow],
         ],
-      });
+      );
       setColumns(newColumns);
       setMockDataSource(adjustDataSource(newColumns));
     },

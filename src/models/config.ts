@@ -58,10 +58,14 @@ export interface ProtableConfigHook {
  */
 export const useProTableConfig = (): ProtableConfigHook => {
   const { useStore, mutate } = createStore<'config'>(PROTABLE_NAMESPACE);
-  const [config] = useStore('config', protableConfigState);
+  const [config] = useStore<ProtableConfigState>('config', protableConfigState);
 
   return {
     config,
+    /**
+     * 修改表格配置项
+     * @param value
+     */
     handleTableConfig: (value) => {
       mutate('config', (state: ProtableConfigState) => {
         console.log(value);

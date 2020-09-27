@@ -1,7 +1,7 @@
 import React, { FC, memo, useState } from 'react';
 import { Drawer, Radio, Space, Button } from 'antd';
 import ReactJson from 'react-json-view';
-import { useProTableDataSource } from '../../models/dataSource';
+import { useProTableDataSource } from '@/models/dataSource';
 
 const { Button: RadioButton, Group } = Radio;
 const ProTablePage: FC = memo(() => {

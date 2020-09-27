@@ -8,3 +8,7 @@ export { default as ColorPanel } from './ColorPanel';
 export { default as InfoNote } from './InfoNote';
 export { default as DataFillPanel } from './DataFillPanel';
 export { default as DataPreviewPanel } from './DataPreviewPanel';
+/**
+ * 拖拽 HOC
+ */
+export { default as DragAndDrop } from './DragAndDrop';

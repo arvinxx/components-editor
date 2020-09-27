@@ -19,9 +19,9 @@ import { useProTableDataSource } from '@/models/dataSource';
 import { useProTableColumn } from '@/models/columns';
 import { useProTableRowSelection } from '@/models/rowSelection';
 import { useProTableToolBar } from '@/models/toolbar';
+import { DataPreviewPanel } from '@/components';
 import TableHeader from './TableHeader';
 import styles from './style.less';
-import { DataPreviewPanel } from '@/components';
 
 const ProTablePage: FC = () => {
   const actionRef = useRef<ActionType>();
@@ -130,11 +130,10 @@ const ProTablePage: FC = () => {
         rowSelection={rowSelection}
         size={size}
         showHeader={showHeader}
-        options={false}
+        options={{ setting: false }}
         toolBarRender={
-          !showToolBar
-            ? false
-            : () =>
+          showToolBar
+            ? () =>
                 (toolBarActions &&
                   toolBarActions.map((action) => (
                     <Button key={action.text} type={action.type}>
@@ -142,6 +141,7 @@ const ProTablePage: FC = () => {
                     </Button>
                   ))) ||
                 []
+            : false
         }
         tableAlertRender={showAlertRender ? undefined : false}
         request={
@@ -235,6 +235,8 @@ const ProTablePage: FC = () => {
                     const item = items[col?.dataIndex];
                     return {
                       className: {
+                        [styles.cell]: true,
+                        [styles.activeCell]: activeCellKey === item.key,
                         [styles.activeHeader]: activeColumnKey === col?.key,
                         [styles.lastActiveHeader]:
                           activeColumnKey === col?.key &&

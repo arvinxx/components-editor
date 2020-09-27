@@ -1,6 +1,5 @@
 import { TagType } from '@/typings/table';
 
-import update from 'immutability-helper';
 import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
 
 export interface CellType {
@@ -71,7 +70,7 @@ export interface ProtableDataSourceHook {
 /**
  * 数据源 Model
  */
-export const useProTableDataSource = (): ProtableDataSourceHook => {
+export const useProTableDataSource = () => {
   const { useStore, mutate } = createStore<
     'dataSourceConfig' | 'mockDataSource'
   >(PROTABLE_NAMESPACE);
@@ -85,21 +84,36 @@ export const useProTableDataSource = (): ProtableDataSourceHook => {
   return {
     dataSourceConfig,
     mockDataSource,
+    /**
+     * 全量修改 mock 数据源的方法
+     */
     setMockDataSource,
+    /**
+     * 修改表格数据源的配置
+     * @param value
+     */
     handleTableDataSourceConfig: (value) => {
-      mutate('dataSourceConfig', (state: ProtableDataSourceState) => {
-        return { ...state, ...value };
+      const entries = Object.entries(value);
+
+      mutate('dataSourceConfig', (state) => {
+        entries.forEach(([key, newValue]) => {
+          if (state[key]) {
+            state[key] = newValue;
+          }
+        });
       });
     },
+    /**
+     * 修改 mock数据源的文本
+     * @param rowIndex
+     * @param columnDataIndex
+     * @param content
+     */
     handleMockCellText(rowIndex, columnDataIndex, content) {
       mutate('mockDataSource', (state: ProtableDataSourceState) => {
-        return update(state.mockDataSource, {
-          [rowIndex]: {
-            [columnDataIndex]: {
-              content: { $set: content },
-            },
-          },
-        });
+        if (state[rowIndex][columnDataIndex]) {
+          state[rowIndex][columnDataIndex].content = content;
+        }
       });
     },
   };

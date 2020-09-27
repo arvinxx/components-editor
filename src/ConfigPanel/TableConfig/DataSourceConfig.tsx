@@ -14,6 +14,7 @@ const DataSourceConfig: FC = () => {
     dataSourceConfig,
     mockDataSource,
     handleTableDataSourceConfig,
+    setMockDataSource,
   } = useProTableDataSource();
   const { columns, setColumns } = useProTableColumn();
   const { dataSourceType, onlineUrl } = dataSourceConfig;
@@ -43,9 +44,7 @@ const DataSourceConfig: FC = () => {
     }
 
     setColumns(newColumns);
-    handleTableDataSourceConfig({
-      mockDataSource: newDataSource,
-    });
+    setMockDataSource(newDataSource);
   };
 
   /**
@@ -145,9 +144,8 @@ const DataSourceConfig: FC = () => {
 
                 // 如果数量少于已有的 则减少行数
                 if (value < mockDataSource.length) {
-                  handleTableDataSourceConfig({
-                    mockDataSource: mockDataSource.slice(0, Number(value)),
-                  });
+                  setMockDataSource(mockDataSource.slice(0, Number(value)),
+                  );
                 }
                 // 不然就新增行
                 else {
@@ -166,9 +164,8 @@ const DataSourceConfig: FC = () => {
                       generateRow(newColumns, { rowIndex: i.toString() }),
                     );
                   }
-                  handleTableDataSourceConfig({
-                    mockDataSource: mockDataSource.concat(newRows),
-                  });
+                  setMockDataSource( mockDataSource.concat(newRows),
+                  );
                 }
               }}
             />

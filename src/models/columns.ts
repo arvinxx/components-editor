@@ -1,5 +1,4 @@
 import { AlignType, TagType, ValueEnum, ValueEnumObj } from '@/typings/table';
-import update from 'immutability-helper';
 import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
 
 export interface ColumnType {
@@ -131,19 +130,8 @@ export type ProtableColumnState = ColumnType[];
 export interface ProtableConfigHook {
   columns: ProtableColumnState;
   setColumns: (columns: ProtableColumnState) => void;
-  /**
-   * 修改列配置项
-   * @param {string} ColumnDataIndex 列索引
-   * @param {string} field 需修改字段
-   * @param {any} value 修改值
-   * */
   handleTableColumn: (dataIndex: string, field: string, value: any) => void;
-  /**
-   * 根据 Key 获取相应的列
-   * @param key
-   */
   getColumnByKey: (key: string) => { column: ColumnType; index: number };
-
   /**
    * 删除 Column 的 enum 对象
    * @param columnIndex
@@ -188,25 +176,31 @@ export interface ProtableConfigHook {
 /**
  * 简单配置的 Model
  */
-export const useProTableColumn = (): ProtableConfigHook => {
+export const useProTableColumn = () => {
   const { useStore, mutate } = createStore<'columns'>(PROTABLE_NAMESPACE);
   const [columns, setColumns] = useStore('columns', defaultTableData.columns);
 
   return {
     columns,
     setColumns,
-    handleTableColumn: (dataIndex, field, value) => {
+    /**
+     * 修改列配置项
+     * @param {string} dataIndex 列索引
+     * @param {string} field 需修改字段
+     * @param {any} value 修改值
+     * */
+    handleTableColumn: (dataIndex: string, field: string , value: any) => {
       mutate('columns', (state: ProtableColumnState) => {
         const index = state.findIndex((col) => col.dataIndex === dataIndex);
-        return update(state, {
-          [index]: {
-            [field]: { $set: value },
-          },
-        });
+        state[index][field] = value;
       });
     },
-    getColumnByKey: (key) => {
-      const index = columns.findIndex((col) => col.key === key);
+    /**
+     * 根据 Key 获取相应的列
+     * @param key
+     */
+    getColumnByKey: (key: string) => {
+      const index = columns.findIndex((col: ColumnType) => col.key === key);
       return { column: columns[index], index };
     },
   };
