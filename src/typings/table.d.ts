@@ -18,6 +18,8 @@ export interface RowType {
 
 export type TagType = { text: string; color: string };
 
+export type EnumType = string;
+
 export type ActionType = { text: string; type: ButtonType };
 
 export type ValueEnum = { text: string; status?: StatusType; index?: string };

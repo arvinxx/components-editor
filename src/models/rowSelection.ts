@@ -1,5 +1,5 @@
-import { createStore, PROTABLE_NAMESPACE } from './utils';
 import { TableRowSelection } from 'antd/es/table/interface';
+import { createStore, PROTABLE_NAMESPACE } from './utils';
 
 /**
  * Row Selection 状态
@@ -20,8 +20,8 @@ export interface ProTableRowSelectionState {
 }
 
 export const proTableRowSelectionState: ProTableRowSelectionState = {
-  showAlertRender: false,
-  showRowSelection: false,
+  showAlertRender: true,
+  showRowSelection: true,
   rowSelection: {
     columnWidth: 60,
     type: 'checkbox',
@@ -50,7 +50,7 @@ export interface RowSelectionHook extends ProTableRowSelectionState {
 }
 
 /**
- * ProTable 的分页器 Model
+ * 行选择器 Model
  */
 export const useProTableRowSelection = (): RowSelectionHook => {
   const { useStore, mutate } = createStore<keyof ProTableRowSelectionState>(
@@ -78,12 +78,7 @@ export const useProTableRowSelection = (): RowSelectionHook => {
     setShowAlertRender,
     setRowSelection,
     handleRowSelection: (value) => {
-      mutate(
-        'rowSelection',
-        (state: ProTableRowSelectionState['rowSelection']) => {
-          return { ...state, ...value };
-        },
-      );
+      mutate('rowSelection', value, true);
     },
   };
 };

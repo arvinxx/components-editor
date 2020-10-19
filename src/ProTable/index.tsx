@@ -1,5 +1,5 @@
 import ProTable, { TableDropdown, ActionType } from '@ant-design/pro-table';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, useMemo } from 'react';
 
 import { Badge, Space, Tag, Button } from 'antd';
 
@@ -29,8 +29,8 @@ const ProTablePage: FC = () => {
   const [tableSize, setRef] = useSize<HTMLDivElement>();
 
   const { pagination, showPagination } = useProTablePagination();
-  const { rowSelection } = useProTableRowSelection();
-  const { showAlertRender } = useProTableRowSelection();
+
+  const { showAlertRender, rowSelection } = useProTableRowSelection();
   const {
     toolBarActions,
     showToolBar,
@@ -81,19 +81,19 @@ const ProTablePage: FC = () => {
     }
   }, [shouldRefreshData]);
 
-  let paginationConfig: TablePaginationConfig;
-  switch (dataSourceType) {
-    case 'mock':
-      paginationConfig = pagination!;
-      break;
-    default:
-    case 'online':
-      if (pagination) {
+  const getPaginationConfig = useMemo((): TablePaginationConfig | undefined => {
+    switch (dataSourceType) {
+      case 'mock':
+        return pagination!;
+      default:
+      case 'online':
+        if (!pagination) return undefined;
+
+        // eslint-disable-next-line no-case-declarations
         const { total, ...res } = pagination;
-        paginationConfig = res;
-      }
-      break;
-  }
+        return res;
+    }
+  }, [pagination, dataSourceType]);
   return (
     <div
       id="x-table"
@@ -114,7 +114,7 @@ const ProTablePage: FC = () => {
           },
         }}
         rowKey="key"
-        pagination={showPagination ? paginationConfig : false}
+        pagination={showPagination ? getPaginationConfig : false}
         bordered={bordered}
         search={
           showSearch
@@ -130,10 +130,11 @@ const ProTablePage: FC = () => {
         rowSelection={rowSelection}
         size={size}
         showHeader={showHeader}
-        options={{ setting: false }}
+        options={false}
         toolBarRender={
-          showToolBar
-            ? () =>
+          !showToolBar
+            ? false
+            : () =>
                 (toolBarActions &&
                   toolBarActions.map((action) => (
                     <Button key={action.text} type={action.type}>
@@ -141,7 +142,6 @@ const ProTablePage: FC = () => {
                     </Button>
                   ))) ||
                 []
-            : false
         }
         tableAlertRender={showAlertRender ? undefined : false}
         request={
@@ -157,13 +157,6 @@ const ProTablePage: FC = () => {
               }
             : undefined
         }
-        postData={(data) => {
-          if (dataSourceType === 'online') {
-            handleTableDataSourceConfig({ onlineDataSource: data });
-          }
-          return data;
-        }}
-        // @ts-ignore
         columns={columns.map((col, index) => {
           const {
             tags,
@@ -183,6 +176,20 @@ const ProTablePage: FC = () => {
             ...res
           } = col;
 
+          let withValue: number | string | undefined = width;
+          switch (widthType) {
+            case 'auto':
+            default:
+              withValue = undefined;
+              break;
+            case 'number':
+              withValue = width;
+              break;
+            case 'percent':
+              withValue = `${widthPercent}%`;
+              break;
+          }
+
           return {
             ...res,
             filters: filters ?? isEnum(valueType),
@@ -200,13 +207,7 @@ const ProTablePage: FC = () => {
             title,
             width:
               // 如果是正在缩放的,那么使用缩放宽度
-              resizingIndex === dataIndex
-                ? resizingWidth
-                : widthType === 'number'
-                ? width
-                : widthType === 'percent'
-                ? `${widthPercent}%`
-                : undefined,
+              resizingIndex === dataIndex ? resizingWidth : withValue,
             align,
             // header 单元格控制
             onHeaderCell: (column) => ({
@@ -221,7 +222,7 @@ const ProTablePage: FC = () => {
                   });
                 } else {
                   handleTableInteract({
-                    activeColumnKey: column?.key,
+                    activeColumnKey: column?.key?.toString(),
                     activeCellKey: '',
                   });
                 }
@@ -244,8 +245,8 @@ const ProTablePage: FC = () => {
                           index + 1 ===
                             (pagination &&
                             onlineDataSource.length >
-                              paginationConfig?.pageSize!
-                              ? paginationConfig?.pageSize
+                              getPaginationConfig?.pageSize!
+                              ? getPaginationConfig?.pageSize
                               : onlineDataSource.length),
                       },
                       onClick: () => {
@@ -338,6 +339,13 @@ const ProTablePage: FC = () => {
             },
           };
         })}
+        // @ts-ignore
+        postData={(data) => {
+          if (dataSourceType === 'online') {
+            handleTableDataSourceConfig({ onlineDataSource: data });
+          }
+          return data;
+        }}
       />
     </div>
   );

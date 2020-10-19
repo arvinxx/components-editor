@@ -1,19 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { Tag, Input, Tooltip, Row, Col, Menu, Dropdown, Modal } from 'antd';
+import { Tag, Input, Tooltip, Row, Col, Menu, Dropdown } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { ActionType, TagType, ValueEnum } from 'typings/data/table';
-import styles from './style.less';
-import { StateKeyType } from '@/common/state';
+import { ActionType, TagType, ValueEnum } from '@/typings/table';
 import { ButtonType } from 'antd/es/button';
+import styles from './style.less';
 
 interface EditableTagGroupProps<T> {
   /**
    * tags 数组对象
-   **/
+   * */
   tags: (string | TagType | ValueEnum | ActionType)[];
   /**
    * 删除单个元素
-   **/
+   * */
   handleDelete: (enumIndex: number) => void;
   handleAdd: (text: string) => void;
   /**
@@ -28,11 +27,11 @@ interface EditableTagGroupProps<T> {
   type?: 'tag' | 'status' | 'action';
   /**
    * 显示修改标签颜色的菜单
-   **/
+   * */
   showDropdown: boolean;
   /**
    * 处理Tag颜色修改
-   **/
+   * */
   handleTagColorChange?: (tagIndex: number, color: string) => void;
 }
 const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
@@ -57,11 +56,11 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
         handleTagColorChange?.(editTagColorIndex, key.toString());
       }}
     >
-      <Menu.Item key={'default'}>默认</Menu.Item>
-      <Menu.Item key={'blue'}>蓝色</Menu.Item>
-      <Menu.Item key={'green'}>绿色</Menu.Item>
-      <Menu.Item key={'red'}>红色</Menu.Item>
-      <Menu.Item key={'gold'}>金色</Menu.Item>
+      <Menu.Item key="default">默认</Menu.Item>
+      <Menu.Item key="blue">蓝色</Menu.Item>
+      <Menu.Item key="green">绿色</Menu.Item>
+      <Menu.Item key="red">红色</Menu.Item>
+      <Menu.Item key="gold">金色</Menu.Item>
     </Menu>
   );
 
@@ -71,11 +70,11 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
         handleTagColorChange?.(editTagColorIndex, key.toString());
       }}
     >
-      <Menu.Item key={'Default'}>默认</Menu.Item>
-      <Menu.Item key={'Processing'}>处理中</Menu.Item>
-      <Menu.Item key={'Success'}>成功</Menu.Item>
-      <Menu.Item key={'Error'}>失败</Menu.Item>
-      <Menu.Item key={'Warning'}>警告</Menu.Item>
+      <Menu.Item key="Default">默认</Menu.Item>
+      <Menu.Item key="Processing">处理中</Menu.Item>
+      <Menu.Item key="Success">成功</Menu.Item>
+      <Menu.Item key="Error">失败</Menu.Item>
+      <Menu.Item key="Warning">警告</Menu.Item>
     </Menu>
   );
   const actionMenu = (
@@ -84,11 +83,11 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
         handleTagColorChange?.(editTagColorIndex, key.toString());
       }}
     >
-      <Menu.Item key={'primary'}>主按钮</Menu.Item>
-      <Menu.Item key={'default'}>次级按钮</Menu.Item>
-      <Menu.Item key={'dashed'}>虚框按钮</Menu.Item>
-      <Menu.Item key={'text'}>文本按钮</Menu.Item>
-      <Menu.Item key={'link'}>链接按钮</Menu.Item>
+      <Menu.Item key="primary">主按钮</Menu.Item>
+      <Menu.Item key="default">次级按钮</Menu.Item>
+      <Menu.Item key="dashed">虚框按钮</Menu.Item>
+      <Menu.Item key="text">文本按钮</Menu.Item>
+      <Menu.Item key="link">链接按钮</Menu.Item>
     </Menu>
   );
 
@@ -125,7 +124,7 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
 
   /**
    * 添加对象
-   **/
+   * */
   const handleInputConfirm = () => {
     if (inputValue !== '') {
       handleAdd(inputValue);
@@ -135,7 +134,7 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
 
   /**
    * 修改编辑的输入
-   **/
+   * */
   const handleEditInputConfirm = () => {
     handleTextChange(editInputIndex, editInputValue);
 
@@ -146,9 +145,7 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
   /**
    * 根据外界传入的参数判断使用哪种颜色类型和菜单
    */
-  const getColorAndMenu = (
-    tag: string | ActionType | TagType | StateKeyType | ValueEnum
-  ) => {
+  const getColorAndMenu = (tag: string | ActionType | TagType | ValueEnum) => {
     switch (type) {
       case 'action':
         return {
@@ -175,7 +172,7 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
             if (editInputIndex === index) {
               return (
                 <Input
-                  key={tag + '-' + index}
+                  key={`${tag}-${index}`}
                   autoFocus={editInputIndex === index}
                   size="small"
                   className={styles.input}
@@ -194,7 +191,7 @@ const EditableTagGroup: <T>(props: EditableTagGroupProps<T>) => JSX.Element = ({
             const isLongTag = text.length > 20;
 
             const tagElem = (
-              <Col key={text + '-' + index}>
+              <Col key={`${text}-${index}`}>
                 <Tag
                   className={styles.tag}
                   closable

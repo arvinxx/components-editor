@@ -1,4 +1,10 @@
-import { AlignType, TagType, ValueEnum, ValueEnumObj } from '@/typings/table';
+import {
+  AlignType,
+  EnumType,
+  TagType,
+  ValueEnum,
+  ValueEnumObj,
+} from '@/typings/table';
 import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
 
 export interface ColumnType {
@@ -55,7 +61,7 @@ export interface ColumnType {
    *
    * 例如: ['男','女'] ['前端','后端','设计'] 等
    * */
-  enum: string[];
+  enum: EnumType[];
 
   /**
    * 操作类型的数据元组
@@ -95,6 +101,8 @@ export interface ColumnType {
   hideInSearch?: boolean;
 }
 
+export type EnumKeyType = 'actions' | 'enum' | 'status' | 'tags';
+export type EnumValueType = EnumType | ValueEnum | TagType;
 /**
  * 列单元数据类型
  * */
@@ -131,46 +139,6 @@ export interface ProtableConfigHook {
   columns: ProtableColumnState;
   setColumns: (columns: ProtableColumnState) => void;
   handleTableColumn: (dataIndex: string, field: string, value: any) => void;
-  getColumnByKey: (key: string) => { column: ColumnType; index: number };
-  /**
-   * 删除 Column 的 enum 对象
-   * @param columnIndex
-   * @param enumIndex
-   */
-  deleteColumnEnum: (columnIndex: number, enumIndex: number) => void;
-  /**
-   * 添加 enum 对象
-   * @param columnIndex
-   * @param text
-   */
-  addColumnEnum: (columnIndex: number, text: string) => void;
-  /**
-   * 修改 列的 enum 值
-   * @param columnIndex
-   * @param enumIndex
-   * @param text
-   */
-  handleColumnEnum: (
-    columnIndex: number,
-    enumIndex: number,
-    text: string,
-  ) => void;
-  /**
-   * 修改 列的 对象值
-   * @param columnIndex
-   * @param enumIndex
-   * @param payload
-   */
-  handleColumnTagOrStatus: (
-    columnIndex: number,
-    enumIndex: number,
-    payload: {
-      text?: string;
-      color?: string;
-      status?: string;
-      index?: string;
-    },
-  ) => void;
 }
 
 /**
@@ -178,7 +146,10 @@ export interface ProtableConfigHook {
  */
 export const useProTableColumn = () => {
   const { useStore, mutate } = createStore<'columns'>(PROTABLE_NAMESPACE);
-  const [columns, setColumns] = useStore('columns', defaultTableData.columns);
+  const [columns, setColumns] = useStore<ProtableColumnState>(
+    'columns',
+    defaultTableData.columns,
+  );
 
   return {
     columns,
@@ -189,7 +160,7 @@ export const useProTableColumn = () => {
      * @param {string} field 需修改字段
      * @param {any} value 修改值
      * */
-    handleTableColumn: (dataIndex: string, field: string , value: any) => {
+    handleTableColumn: (dataIndex: string, field: string, value: any) => {
       mutate('columns', (state: ProtableColumnState) => {
         const index = state.findIndex((col) => col.dataIndex === dataIndex);
         state[index][field] = value;
@@ -202,6 +173,146 @@ export const useProTableColumn = () => {
     getColumnByKey: (key: string) => {
       const index = columns.findIndex((col: ColumnType) => col.key === key);
       return { column: columns[index], index };
+    },
+    /**
+     * 删除 Column 的 enum 对象
+     * @param columnIndex
+     * @param enumIndex
+     */
+    deleteColumnEnum: (columnIndex: number, enumIndex: number) => {
+      let type: EnumKeyType;
+      switch (columns[columnIndex].valueType) {
+        case 'enum':
+          type = 'enum';
+          break;
+        case 'option':
+          type = 'actions';
+          break;
+        case 'status':
+          type = 'status';
+          break;
+        case 'tag':
+          type = 'tags';
+          break;
+        default:
+          return;
+      }
+      mutate<ProtableColumnState>('columns', (state) => {
+        state[columnIndex][type].splice(enumIndex, 1);
+      });
+    },
+    /**
+     * 添加 enum 对象
+     * @param columnIndex
+     * @param text
+     */
+    addColumnEnum: (columnIndex: number, text: string) => {
+      let type: EnumKeyType;
+      let content: EnumValueType = text;
+      switch (columns[columnIndex].valueType) {
+        // 如果是 tag 直接跳过
+        case 'tag':
+          type = 'tags';
+          content = { text, color: 'default' };
+          break;
+        case 'option':
+          type = 'actions';
+          break;
+        case 'status':
+          type = 'status';
+          content = { text, status: 'Default' };
+          break;
+        case 'text':
+        default:
+          type = 'enum';
+          break;
+      }
+      // 如果存在重复 不添加
+      const isExist = columns[columnIndex][type].includes(text as any);
+      if (isExist) return;
+      mutate<ProtableColumnState>('columns', (state) => {
+        state[columnIndex][type].push(content as any);
+      });
+    },
+    /**
+     * 修改 列的 enum 值
+     * @param columnIndex 列 index
+     * @param enumIndex
+
+     */
+
+    /**
+     * 修改 列的 对象值
+     * @param columnIndex 列索引
+     * @param enumIndex enum 索引
+     * @param payload 其余配置项
+     * @param payload.text
+     * @param payload.color
+     * @param payload.status
+     * @param payload.index
+     */
+    handleColumnTagOrStatus: (
+      columnIndex: number,
+      enumIndex: number,
+      payload: {
+        text?: string;
+        color?: string;
+        status?: string;
+        index?: string;
+      },
+    ) => {
+      const { text, index, color, status } = payload;
+      let type: EnumKeyType;
+      let content: EnumValueType = text || '';
+      const column = columns[columnIndex];
+
+      const newTagContent = () => {
+        const tagEnum = column.tags[enumIndex];
+        let { text: newText, color: newColor } = tagEnum;
+
+        if (text) newText = text;
+        if (color) newColor = color;
+        return { text: newText, color: newColor };
+      };
+      const newStatusContent = () => {
+        const statusEnum = column.status[enumIndex];
+
+        let {
+          text: newStatusText,
+          index: newIndex,
+          status: newStatus,
+        } = statusEnum;
+
+        if (text) newStatusText = text;
+        if (status) newStatus = status;
+        if (index) newIndex = index;
+        return { text: newStatusText, status: newStatus, index: newIndex };
+      };
+
+      switch (column.valueType) {
+        case 'tag':
+          type = 'tags';
+          content = newTagContent();
+          break;
+        case 'status':
+          type = 'status';
+
+          content = newStatusContent();
+          break;
+        case 'option':
+          type = 'actions';
+          break;
+        case 'text':
+        default:
+          type = 'enum';
+      }
+      // 如果存在重复 不添加
+      const isExist = column[type].includes(text as any);
+      if (isExist) return;
+
+      mutate<ProtableColumnState>('columns', (state) => {
+        state[columnIndex][type][enumIndex] = content;
+      });
     },
   };
 };

@@ -10,7 +10,6 @@ import { Resizable } from 'react-resizable';
 import classnames from 'classnames';
 import { PlusCircleFilled } from '@ant-design/icons';
 
-
 import { useDrag, useDrop } from 'react-dnd';
 
 import { CellType, ColumnType } from '@/typings/table';
@@ -163,14 +162,13 @@ const TableHeader: FC<ResizeableTitleProps> = (props) => {
 
   //* *****  表格拖拽  ********//
   const moveColumn = useCallback(
-    (dragIndex, hoverIndex) => {
+    (dragIndex: number, hoverIndex: number) => {
       const dragRow = columns[dragIndex];
       const newColumns = columns.concat([]);
-       newColumns.splice( [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragRow],
-        ],
-      );
+      newColumns.splice([
+        [dragIndex, 1],
+        [hoverIndex, 0, dragRow],
+      ]);
       setColumns(newColumns);
       setMockDataSource(adjustDataSource(newColumns));
     },

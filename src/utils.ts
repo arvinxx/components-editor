@@ -1,4 +1,5 @@
-import { AlignType, ColumnType, RowType } from '@/typings/table';
+import { AlignType, RowType } from '@/typings/table';
+import { ColumnType } from '@/models/columns';
 import { Random } from 'mockjs';
 
 /**
@@ -83,13 +84,19 @@ export const getDefaultTableData = () => {
   };
 };
 
-
 /**
  * 判断是否是元组类数据
  * @param type
  */
 export const isEnum = (type: ColumnType['valueType']) => {
   return ['enum', 'status', 'tag'].includes(type);
+};
+/**
+ * 判断是否是元组类数据
+ * @param type
+ */
+export const isMockData = (type: ColumnType['valueType']) => {
+  return dataSourceType==='';
 };
 
 /**

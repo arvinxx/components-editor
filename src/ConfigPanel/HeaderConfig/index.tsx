@@ -93,42 +93,56 @@ const HeaderConfig: FC<HeaderConfigProps> = ({ onBack }) => {
       setEditIndex(false);
     };
 
-    return isEditingIndex ? (
-      <div>
-        <Select
-          value={column?.dataIndex}
-          size="small"
-          style={{ width: '100%' }}
-          placeholder="请选择索引"
-          onChange={changeDataIndex}
-        >
-          {Object.entries(onlineDataSource[0])?.map((entry) => {
-            const [key, value] = entry;
+    return notColumnData(column.valueType) ? null : (
+      <PanelLayout
+        title={
+          <div>
+            索引{' '}
+            <InfoNote
+              title="用于指向具体数据的参数项"
+              url="https://yuque.com"
+            />
+          </div>
+        }
+      >
+        {isEditingIndex ? (
+          <div>
+            <Select
+              value={column?.dataIndex}
+              size="small"
+              style={{ width: '100%' }}
+              placeholder="请选择索引"
+              onChange={changeDataIndex}
+            >
+              {Object.entries(onlineDataSource[0])?.map((entry) => {
+                const [key, value] = entry;
 
-            return (
-              <Option value={key} key={key} title={key}>
-                <div style={{ display: 'inline-block', width: 32 }}>
-                  <TypeString
-                    value={value instanceof Array ? 'array' : typeof value}
-                  />
-                </div>
-                {key}
-              </Option>
-            );
-          })}
-        </Select>
-      </div>
-    ) : (
-      <div className={styles.dataIndex} style={{ display: 'flex' }}>
-        <div style={{ marginRight: 4 }}>{column.dataIndex}</div>
-        <EditOutlined
-          onClick={() => {
-            setEditIndex(true);
-            setEditingValue(column.dataIndex);
-          }}
-          className={styles.editIcon}
-        />
-      </div>
+                return (
+                  <Option value={key} key={key} title={key}>
+                    <div style={{ display: 'inline-block', width: 32 }}>
+                      <TypeString
+                        value={value instanceof Array ? 'array' : typeof value}
+                      />
+                    </div>
+                    {key}
+                  </Option>
+                );
+              })}
+            </Select>
+          </div>
+        ) : (
+          <div className={styles.dataIndex} style={{ display: 'flex' }}>
+            <div style={{ marginRight: 4 }}>{column.dataIndex}</div>
+            <EditOutlined
+              onClick={() => {
+                setEditIndex(true);
+                setEditingValue(column.dataIndex);
+              }}
+              className={styles.editIcon}
+            />
+          </div>
+        )}{' '}
+      </PanelLayout>
     );
   };
 
@@ -301,22 +315,7 @@ const HeaderConfig: FC<HeaderConfigProps> = ({ onBack }) => {
             }}
           />
         </PanelLayout>
-
-        {notColumnData(column.valueType) ? null : (
-          <PanelLayout
-            title={
-              <div>
-                索引{' '}
-                <InfoNote
-                  title="用于指向具体数据的参数项"
-                  url="https://yuque.com"
-                />
-              </div>
-            }
-          >
-            <DataIndex />
-          </PanelLayout>
-        )}
+        <DataIndex />
         <PanelLayout title="数据类型">
           <Radio.Group
             value={column.valueType}

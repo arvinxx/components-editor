@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import { Random } from 'mockjs';
 
-import { TagType, ValueEnum } from 'typings/data/table';
+import { TagType, ValueEnum } from '@/typings/table';
 import { useProTableColumn } from '@/models/columns';
 import { useProTableInteract } from '@/models/interact';
 import { useProTableDataSource } from '@/models/dataSource';
@@ -86,10 +86,62 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
         column.status.forEach((item) => {
           Object.assign(valueEnum, { [item?.index ?? item.text]: item });
         });
+        break;
+      default:
     }
     handleTableColumn(column.dataIndex, 'valueEnum', valueEnum);
   };
 
+  const renderEnumList = () => {
+    switch (column?.valueType) {
+      case 'status':
+        return column?.status?.map((state, enumIndex) => {
+          return (
+            <PanelLayout
+              leftCol={4}
+              rightCol={20}
+              key={enumIndex}
+              title={state?.text}
+              align="middle"
+            >
+              <Input
+                value={state.index}
+                placeholder="请输入数据索引"
+                onChange={(e) => {
+                  handleColumnTagOrStatus(colIndex, enumIndex, {
+                    index: e.target.value,
+                  });
+                }}
+              />
+            </PanelLayout>
+          );
+        });
+      case 'enum':
+        return column?.enum.map((item, enumIndex) => {
+          return (
+            <PanelLayout
+              leftCol={4}
+              rightCol={20}
+              key={enumIndex}
+              title={item}
+              align="middle"
+            >
+              <Input
+                value={item}
+                placeholder="请输入数据索引"
+                onChange={(e) => {
+                  handleColumnTagOrStatus(colIndex, enumIndex, {
+                    index: e.target.value,
+                  });
+                }}
+              />
+            </PanelLayout>
+          );
+        });
+      default:
+        return null;
+    }
+  };
   return (
     <>
       <PanelLayout title={title || '自定义填充'} marginTop={8}>
@@ -139,51 +191,7 @@ const EnumFill: <T>(props: EnumFillProps<T>) => JSX.Element = ({
           setShowModal(false);
         }}
       >
-        {column?.valueType === 'status'
-          ? column?.status?.map((state, enumIndex) => {
-              return (
-                <PanelLayout
-                  leftCol={4}
-                  rightCol={20}
-                  key={enumIndex}
-                  title={state?.text}
-                  align="middle"
-                >
-                  <Input
-                    value={state.index}
-                    placeholder="请输入数据索引"
-                    onChange={(e) => {
-                      handleColumnTagOrStatus(colIndex, enumIndex, {
-                        index: e.target.value,
-                      });
-                    }}
-                  />
-                </PanelLayout>
-              );
-            })
-          : column?.valueType === 'enum'
-          ? column?.enum.map((item, enumIndex) => {
-              return (
-                <PanelLayout
-                  leftCol={4}
-                  rightCol={20}
-                  key={enumIndex}
-                  title={item}
-                  align="middle"
-                >
-                  <Input
-                    value={item}
-                    placeholder="请输入数据索引"
-                    onChange={(e) => {
-                      // handleColumnTagOrStatus(index, enumIndex, {
-                      //   index: e.target.value,
-                      // });
-                    }}
-                  />
-                </PanelLayout>
-              );
-            })
-          : null}
+        {renderEnumList()}
       </Modal>
     </>
   );

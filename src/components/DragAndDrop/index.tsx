@@ -7,7 +7,7 @@ const RNDContext = createDndContext(HTML5Backend);
 const DragAndDrop: FC = ({ children }) => {
   const manager = useRef(RNDContext);
   return (
-    <DndProvider manager={manager.current.dragDropManager}>
+    <DndProvider manager={manager.current.dragDropManager!}>
       {children}
     </DndProvider>
   );

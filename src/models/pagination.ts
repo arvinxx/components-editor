@@ -1,18 +1,12 @@
 import { TablePaginationConfig } from 'antd/es/table';
 
-import { createStore, KeyValue, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from './utils';
 
 /**
  * Pagination 状态
  */
 export interface ProTablePaginationState {
-  /**
-   * 是否显示分页器
-   * */
   showPagination: boolean;
-  /**
-   * 分页器配置项
-   * */
   pagination: TablePaginationConfig;
 }
 
@@ -26,24 +20,9 @@ export const paginationState: ProTablePaginationState = {
 };
 
 /**
- * 返回的 Hooks 方法
- */
-export interface PaginationHooks extends ProTablePaginationState {
-  /**
-   * 控制显示 Pagination
-   */
-  setShowPagination: (show: boolean) => void;
-  /**
-   * 修改 pagination 中的任意一个值
-   * @param value
-   */
-  handlePagination: (value: KeyValue) => void;
-}
-
-/**
  * ProTable 的分页器 Model
  */
-export const useProTablePagination = (): PaginationHooks => {
+export const useProTablePagination = () => {
   const { useStore, mutate } = createStore<keyof ProTablePaginationState>(
     PROTABLE_NAMESPACE,
   );
@@ -55,13 +34,23 @@ export const useProTablePagination = (): PaginationHooks => {
   );
 
   return {
+    /**
+     * 是否显示分页器
+     * */
     pagination,
+    /**
+     * 分页器配置项
+     * */
     showPagination,
+    /**
+     * 控制显示 Pagination
+     */
     setShowPagination,
-    handlePagination: (value) => {
-      mutate('pagination', (state: ProTablePaginationState['pagination']) => {
-        return { ...state, ...value };
-      });
+    /**
+     * 修改 pagination 中的任意一个值
+     * @param value
+     */ handlePagination: (value: Record<string, any>) => {
+      mutate('pagination', value, true);
     },
   };
 };

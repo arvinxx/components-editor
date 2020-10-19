@@ -18,7 +18,8 @@
     "declaration": true,
     "skipLibCheck": true,
     "paths": {
-      "@ant-design/pro-components-editor": ["./src"]
+      "@ant-design/pro-components-editor": ["./src"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/"]

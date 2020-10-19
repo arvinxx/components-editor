@@ -5,7 +5,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useIntl } from 'react-intl';
 import { useProTableInteract } from '@/models/interact';
 import { useProTableColumn } from '@/models/columns';
-import { CellType, useProTableDataSource } from '@/models/dataSource';
+import { useProTableDataSource } from '@/models/dataSource';
 
 import styles from './style.less';
 
@@ -29,6 +29,20 @@ const CellConfig: FC<CellConfigProps> = ({ onBack }) => {
     (entry) => entry[0] === columns[col].dataIndex,
   );
 
+  const getText = () => {
+    if (!cell) return '';
+    const value = cell[1];
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (value instanceof Array) {
+      return '';
+    }
+    if (typeof value.content === 'string') {
+      return value.content;
+    }
+    return value.content.text;
+  };
   return (
     <div>
       <div className={styles.configTitle} onClick={onBack}>
@@ -41,9 +55,9 @@ const CellConfig: FC<CellConfigProps> = ({ onBack }) => {
           <Col span={18}>
             <Input
               size="small"
-              value={cell && (cell[1] as CellType).content}
+              value={getText()}
               onChange={(e) => {
-                handleMockCellText(row, cell?.[0], e.target.value);
+                handleMockCellText(row, cell?.[0]!, e.target.value);
               }}
             />
           </Col>

@@ -11,9 +11,14 @@ type GetContainerFunc = () => HTMLElement;
 export interface ConfigPanelProps {
   drawer?: boolean;
   visible: boolean;
+  onClose: () => void;
   getContainer?: string | HTMLElement | GetContainerFunc | false;
 }
-const ConfigPanel: FC<ConfigPanelProps> = ({ visible = true, container }) => {
+const ConfigPanel: FC<ConfigPanelProps> = ({
+  visible = true,
+  getContainer,
+  onClose,
+}) => {
   const PanelContent = () => {
     const { interact, handleTableInteract } = useProTableInteract();
 
@@ -37,7 +42,13 @@ const ConfigPanel: FC<ConfigPanelProps> = ({ visible = true, container }) => {
     );
   };
   return (
-    <Drawer width={320} visible={visible} mask={false} getContainer={container}>
+    <Drawer
+      onClose={onClose}
+      width={320}
+      visible={visible}
+      mask={false}
+      getContainer={getContainer}
+    >
       <PanelContent />
     </Drawer>
   );

@@ -53,21 +53,6 @@ export const protableDataSourceState: ProtableDataSourceState = {
 };
 
 /**
- * 返回的 Hooks 方法
- */
-export interface ProtableDataSourceHook {
-  dataSourceConfig: Omit<ProtableDataSourceState, 'mockDataSource'>;
-  mockDataSource: ProtableDataSourceState['mockDataSource'];
-  setMockDataSource: (
-    dataSource: ProtableDataSourceState['mockDataSource'],
-  ) => void;
-  handleTableDataSourceConfig: (
-    payload: Partial<ProtableDataSourceState>,
-  ) => void;
-  handleMockCellText: (row: number, col: string, content: string) => void;
-}
-
-/**
  * 数据源 Model
  */
 export const useProTableDataSource = () => {
@@ -82,7 +67,13 @@ export const useProTableDataSource = () => {
   );
 
   return {
+    /**
+     * 数据源配置项
+     */
     dataSourceConfig,
+    /**
+     * 假数据源
+     */
     mockDataSource,
     /**
      * 全量修改 mock 数据源的方法
@@ -92,16 +83,8 @@ export const useProTableDataSource = () => {
      * 修改表格数据源的配置
      * @param value
      */
-    handleTableDataSourceConfig: (value) => {
-      const entries = Object.entries(value);
-
-      mutate('dataSourceConfig', (state) => {
-        entries.forEach(([key, newValue]) => {
-          if (state[key]) {
-            state[key] = newValue;
-          }
-        });
-      });
+    handleTableDataSourceConfig: (value: Record<string, any>) => {
+      mutate('dataSourceConfig', value, true);
     },
     /**
      * 修改 mock数据源的文本
@@ -109,7 +92,11 @@ export const useProTableDataSource = () => {
      * @param columnDataIndex
      * @param content
      */
-    handleMockCellText(rowIndex, columnDataIndex, content) {
+    handleMockCellText(
+      rowIndex: number,
+      columnDataIndex: string,
+      content: any,
+    ) {
       mutate('mockDataSource', (state: ProtableDataSourceState) => {
         if (state[rowIndex][columnDataIndex]) {
           state[rowIndex][columnDataIndex].content = content;
