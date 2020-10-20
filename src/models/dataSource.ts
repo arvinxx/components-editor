@@ -40,6 +40,14 @@ export interface ProtableDataSourceState {
    * 是否需要刷新面板
    */
   shouldRefreshData: boolean;
+  /**
+   * 加载中
+   */
+  showLoading: boolean;
+  /**
+   * 是否显示空数据状态
+   * */
+  showEmpty: boolean;
 }
 
 export const protableDataSourceState: ProtableDataSourceState = {
@@ -50,6 +58,8 @@ export const protableDataSourceState: ProtableDataSourceState = {
   showDataPreviewPanel: false,
   onlineUrl: '',
   onlineDataSource: [],
+  showEmpty: false,
+  showLoading: false,
 };
 
 /**

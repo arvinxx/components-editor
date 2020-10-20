@@ -1,5 +1,5 @@
 import { PluginInstance } from '@/core';
-import StyleConfig from './Style';
+import StyleConfig from './GlobalStyle';
 import DataSource from './DataSource';
 import AdvancedSearch from './AdvancedSearch';
 import ToolBar from './ToolBar';

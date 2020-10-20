@@ -42,15 +42,7 @@ const ProTablePage: FC = () => {
   const { config } = useProTableConfig();
   const { interact, handleTableInteract } = useProTableInteract();
 
-  const {
-    showHeader,
-    widthType,
-    bordered,
-    width,
-    size,
-    showLoading,
-    showEmpty,
-  } = config;
+  const { showHeader, widthType, bordered, width, size } = config;
 
   useEffect(() => {
     handleTableInteract({ tableTotalWidth: tableSize.width });
@@ -66,6 +58,8 @@ const ProTablePage: FC = () => {
     onlineDataSource,
     onlineUrl,
     shouldRefreshData,
+    showEmpty,
+    showLoading,
   } = dataSourceConfig;
   const {
     resizingWidth,

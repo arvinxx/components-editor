@@ -31,6 +31,7 @@
 | Props | 类型 | 例子 | 说明 |
 | --- | --- | --- | --- |
 | state |  |  | 编辑器状态 |
+| config | string |  | Pro Components 的 props 配置参数 |
 | columns | string |  | 可以从编辑器获取的 columns 属性值 |
 | jsCode | string |  | js 代码 |
 | tsCode | string |  | ts 代码 |

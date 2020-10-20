@@ -3,12 +3,13 @@ import { Divider, InputNumber, Radio, Switch } from 'antd';
 
 import { RadioChangeEvent } from 'antd/lib/radio/interface';
 
-import { useProTableConfig } from '@/models/config';
 import { useProTableTheme } from '@/models/theme';
 import { CollapsePanel, PanelLayout, ColorPanel } from '@/components';
 
+import { useGlobalStyle } from './state';
+
 const StyleConfig: FC = () => {
-  const { config, handleTableConfig } = useProTableConfig();
+  const { config, handleTableConfig } = useGlobalStyle();
   const { theme } = useProTableTheme();
 
   const { size, width, bordered, widthType, showHeader } = config;

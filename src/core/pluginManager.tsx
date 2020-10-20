@@ -14,6 +14,14 @@ export interface PluginInstance<S = {}> {
    */
   state?: S;
   /**
+   * 根据 State 中的 key 对 config 配置项进行控制的方法
+   */
+  stateMap?: {
+    key: string;
+    default: any;
+    method: any;
+  };
+  /**
    * 开启插件面板的选择器
    */
   selector?: () => Element;
