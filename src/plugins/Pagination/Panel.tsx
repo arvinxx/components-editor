@@ -1,9 +1,7 @@
 import React, { FC } from 'react';
 import { InputNumber, Radio, Space } from 'antd';
-import { InfoNote } from '@/components';
-
 import { useProTablePagination } from '@/models/pagination';
-import { CollapsePanel, PanelLayout } from '@/components'
+import { CollapsePanel, PanelLayout, InfoNote } from '@/components';
 
 const bottomOptions = [
   { label: '左', value: 'bottomLeft' },

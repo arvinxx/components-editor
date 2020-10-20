@@ -59,7 +59,7 @@ const StyleConfig: FC = () => {
                 name="width"
                 value={width}
                 onChange={(value) => {
-                  handleTableConfig({ width: value });
+                  handleTableConfig({ width: Number(value || 0) });
                 }}
               />
             )}

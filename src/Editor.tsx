@@ -1,11 +1,9 @@
 import React, { FC, useRef, useState } from 'react';
 import { Button } from 'antd';
 import { IntlProvider } from 'react-intl';
-import { DragAndDrop } from '@/components';
 import classNames from 'classnames';
 
-import ProTable from './ProTable';
-import ConfigPanel from './ConfigPanel';
+import { EditorPanel, ProTable } from '@/core';
 import locale from './locales/zh-CN';
 
 import './index.less';
@@ -13,7 +11,7 @@ import './index.less';
 const ProComponentEditor: FC = () => {
   const configCtn = useRef<HTMLDivElement>(null);
 
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   return (
     <div className="ant-pro-table-editor-container">
       <IntlProvider messages={locale} locale="zh-CN" defaultLocale="zh-CN">
@@ -30,12 +28,10 @@ const ProComponentEditor: FC = () => {
           >
             打开抽屉
           </Button>
-          <DragAndDrop>
-            <ProTable />
-          </DragAndDrop>
+          <ProTable />
         </div>
         <div ref={configCtn} className="ant-pro-table-editor-side">
-          <ConfigPanel
+          <EditorPanel
             onClose={() => {
               setVisible(false);
             }}

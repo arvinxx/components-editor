@@ -3,10 +3,10 @@ import { InputNumber, Input, Switch, Radio, Divider } from 'antd';
 
 import { TableRowSelection } from 'antd/es/table/interface';
 
-import { CollapsePanel, PanelLayout } from '@/components'
-import { useProTableRowSelection } from '../../models/rowSelection';
+import { CollapsePanel, PanelLayout } from '@/components';
+import { useProTableRowSelection } from '@/models/rowSelection';
 
-const RowSelectionConfig: FC = () => {
+const RowSelection: FC = () => {
   const {
     showAlertRender,
     showRowSelection,
@@ -90,4 +90,4 @@ const RowSelectionConfig: FC = () => {
   );
 };
 
-export default RowSelectionConfig;
+export default RowSelection;

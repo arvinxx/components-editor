@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
 import { Checkbox, Input } from 'antd';
+import { ButtonType } from 'antd/es/button';
 
 import { useProTableToolBar } from '@/models/toolbar';
 import { EditableTagGroup, CollapsePanel, PanelLayout } from '@/components';
 
 import styles from './style.less';
 
-const ToolBarConfig: FC = () => {
+const ToolBar: FC = () => {
   const {
     showToolBar,
     showTitle,
@@ -70,7 +71,7 @@ const ToolBarConfig: FC = () => {
           type="action"
           showDropdown
           handleTagColorChange={(index, type) => {
-            handleToolBarActions(index, { type });
+            handleToolBarActions(index, { type: type as ButtonType });
           }}
         />
       </PanelLayout>
@@ -78,4 +79,4 @@ const ToolBarConfig: FC = () => {
   );
 };
 
-export default ToolBarConfig;
+export default ToolBar;

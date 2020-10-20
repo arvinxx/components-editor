@@ -15,3 +15,24 @@
 
 - [dumi](https://d.umijs.org/)
 - [father](https://github.com/umijs/father)
+
+## 项目架构
+
+- core: 包含核心模块运行机制,包括插件机制
+
+### Core
+
+- 插件管理器
+- 编辑器面板
+- 待包裹的 Pro 组件
+
+## API
+
+| Props | 类型 | 例子 | 说明 |
+| --- | --- | --- | --- |
+| state |  |  | 编辑器状态 |
+| columns | string |  | 可以从编辑器获取的 columns 属性值 |
+| jsCode | string |  | js 代码 |
+| tsCode | string |  | ts 代码 |
+| onChange | `( {state,columns,code} ) => void` |  | 编辑器状态修改器 |
+| plugins | `PluginInstance[]` |  | 外部注入的插件集 |
