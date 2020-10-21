@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig } from 'umi';
+import slash from 'slash2';
 
 export default defineConfig({
   title: 'ProComponents Editor',
@@ -32,5 +33,37 @@ export default defineConfig({
   dynamicImport: {
     loading: '@ant-design/pro-skeleton',
   },
-  hash: true,
+  hash: true,  cssLoader: {
+    modules: {
+      getLocalIdent: (
+        context: {
+          resourcePath: string;
+        },
+        _: string,
+        localName: string,
+      ) => {
+        if (
+          context.resourcePath.includes('node_modules') ||
+          context.resourcePath.includes('ant.design.pro.less') ||
+          context.resourcePath.includes('global.less')
+        ) {
+          return localName;
+        }
+
+        const match = context.resourcePath.match(/src(.*)/);
+
+        if (match && match[1]) {
+          const path = match[1].replace('.less', '');
+          const arr = slash(path)
+            .split('/')
+            .map((a: string) => a.replace(/([A-Z])/g, '-$1'))
+            .map((a: string) => a.toLowerCase());
+          return `ant-${arr.join('-')}-${localName}`.replace(/--/g, '-');
+        }
+
+        return localName;
+      },
+    },
+  },
+
 });

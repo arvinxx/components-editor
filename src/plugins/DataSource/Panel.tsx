@@ -5,7 +5,7 @@ import { generateColumn, generateRow } from '@/utils';
 import { useProTableDataSource } from '@/models/dataSource';
 import { useProTableColumn, ColumnType } from '@/models/columns';
 
-import { CollapsePanel, PanelLayout } from '@/components';
+import { CollapsePanel, PanelLayout } from '@/core/components';
 
 const DataSourceConfig: FC = () => {
   const {

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Radio, Switch, InputNumber } from 'antd';
 
-import { PanelLayout, CollapsePanel } from '@/components';
+import { PanelLayout, CollapsePanel } from '@/core/components';
 
 import { useIntl } from 'react-intl';
 

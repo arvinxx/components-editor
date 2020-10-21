@@ -1,4 +1,4 @@
-import { createStore, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 /**
  * ProTable 交互状态

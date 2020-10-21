@@ -95,12 +95,10 @@
     "use-merge-value": "^1.0.1"
   },
   "devDependencies": {
-    "stook-devtools": "^0.3.0",
     "@ant-design/compatible": "^1.0.1",
     "@ant-design/dark-theme": "^2.0.2",
     "@ant-design/pro-skeleton": "^1.0.0-beta.9",
     "@babel/core": "^7.8.3",
-    "@types/mockjs": "^1.0.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
@@ -114,6 +112,7 @@
     "@types/jest": "^26.0.0",
     "@types/lodash.isequal": "^4.5.5",
     "@types/memoize-one": "^5.1.2",
+    "@types/mockjs": "^1.0.3",
     "@types/qs": "^6.9.0",
     "@types/react": "^16.9.17",
     "@types/react-color": "^3.0.4",
@@ -150,6 +149,7 @@
     "react-github-btn": "^1.1.1",
     "react-markdown": "^4.3.0",
     "slash2": "^2.0.0",
+    "stook-devtools": "^0.3.0",
     "stylelint": "^13.0.0",
     "terser-webpack-plugin": "^3.0.2",
     "typescript": "^3.9.5",

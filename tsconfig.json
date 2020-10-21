@@ -22,7 +22,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["**/src/", "**/docs/", "**/tests/"],
+  "include": ["**/src", "**/docs/", "**/tests/"],
   "exclude": [
     "node_modules",
     "build",

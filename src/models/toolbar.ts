@@ -1,5 +1,5 @@
 import { ButtonType } from 'antd/es/button';
-import { createStore, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 export type ActionType = { text: string; type: ButtonType };
 
@@ -91,19 +91,21 @@ export const useProTableToolBar = () => {
      * @param index
      * @param payload
      */
-    handleToolBarActions(index: number, { text, type }:{ text?: string; type?: ButtonType }) {
+    handleToolBarActions(
+      index: number,
+      { text, type }: { text?: string; type?: ButtonType },
+    ) {
       mutate('toolBarActions', (state: ActionType[]) => {
         // 如果存在重复 不添加
         const isExist = state.find((a) => a.text === text);
-        if (isExist) return ;
+        if (isExist) return;
 
         // 修改文本或类型
         const content = state[index];
         if (text) content.text = text;
         if (type) content.type = type;
 
-        state[index]=content
-
+        state[index] = content;
       });
     },
   };

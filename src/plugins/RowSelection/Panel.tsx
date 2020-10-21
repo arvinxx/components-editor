@@ -3,7 +3,7 @@ import { InputNumber, Input, Switch, Radio, Divider } from 'antd';
 
 import { TableRowSelection } from 'antd/es/table/interface';
 
-import { CollapsePanel, PanelLayout } from '@/components';
+import { CollapsePanel, PanelLayout } from '@/core/components';
 import { useProTableRowSelection } from '@/models/rowSelection';
 
 const RowSelection: FC = () => {

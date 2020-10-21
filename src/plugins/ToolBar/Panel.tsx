@@ -3,7 +3,7 @@ import { Checkbox, Input } from 'antd';
 import { ButtonType } from 'antd/es/button';
 
 import { useProTableToolBar } from '@/models/toolbar';
-import { EditableTagGroup, CollapsePanel, PanelLayout } from '@/components';
+import { EditableTagGroup, CollapsePanel, PanelLayout } from '@/core/components';
 
 import styles from './style.less';
 

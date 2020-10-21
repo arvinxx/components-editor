@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import ContentFill from '../ContentFill/ContentFill';
 import EnumFillConfig from './EnumFillConfig';
-import { ColumnType } from '../../models/columns';
+import { ColumnType } from '../../../models/columns';
 
 interface DataFillPanelProps {
   column: ColumnType;

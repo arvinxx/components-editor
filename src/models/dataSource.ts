@@ -1,6 +1,6 @@
 import { TagType } from '@/typings/table';
 
-import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
+import { createStore, defaultTableData, PROTABLE_NAMESPACE } from '@/core/model';
 
 export interface CellType {
   key: string;

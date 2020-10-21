@@ -1,5 +1,5 @@
 import { SearchConfig } from '@ant-design/pro-table/es/Form';
-import { createStore, PROTABLE_NAMESPACE } from '@/models/utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 /**
  * Search 状态

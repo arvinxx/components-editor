@@ -7,7 +7,7 @@ import {
   PanelLayout,
   CollapsePanel,
   DataFillPanel,
-} from '@/components';
+} from '@/core/components';
 
 // import { useIntl } from 'react-intl';
 

@@ -40,6 +40,7 @@ export interface PluginInstance<S = {}> {
 type GlobalToken = 'global';
 
 interface PluginManager {
+  isRegister: boolean;
   plugins: { [key: string]: PluginInstance };
   register: (plugin: PluginInstance) => void;
   GlobalPanel: FC;
@@ -48,6 +49,11 @@ interface PluginManager {
 }
 
 export const pluginManager: PluginManager = {
+  /**
+   * 判断插件是否注册完毕
+   * 避免重复注册
+   */
+  isRegister: false,
   /**
    * 待注册的插件列表
    */

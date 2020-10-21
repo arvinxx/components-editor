@@ -1,4 +1,4 @@
-@import '../../../../node_modules/antd/es/style/themes/default';
+@import '~antd/es/style/themes/default';
 
 body {
   --table-header-bg: @background-color-light;
@@ -6,11 +6,11 @@ body {
 
 .activeCell {
   background: @primary-1 !important;
-  border: 2px dashed @primary-color !important;
+  outline: 2px dashed @primary-color !important;
+  outline-offset: -2px;
 }
 
 .cell {
-  border: 2px solid transparent;
   transition: none !important;
 }
 

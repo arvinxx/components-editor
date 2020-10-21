@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { Input } from 'antd';
 
-import { PanelLayout } from '@/components';
-
+import { PanelLayout } from '@/core/components';
 import { useProTableInteract } from '@/models/interact';
 import { useProTableColumn } from '@/models/columns';
 import { useProTableDataSource } from '@/models/dataSource';

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Switch } from 'antd';
 
-import { PanelLayout, CollapsePanel } from '@/components';
+import { PanelLayout, CollapsePanel } from '@/core/components';
 import { useProTableInteract } from '@/models/interact';
 import { useProTableColumn } from '@/models/columns';
 import { notColumnData } from '@/utils';

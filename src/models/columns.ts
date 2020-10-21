@@ -5,7 +5,7 @@ import {
   ValueEnum,
   ValueEnumObj,
 } from '@/typings/table';
-import { createStore, defaultTableData, PROTABLE_NAMESPACE } from './utils';
+import { createStore, defaultTableData, PROTABLE_NAMESPACE } from '@/core/model';
 
 export interface ColumnType {
   /**

@@ -4,7 +4,7 @@ import { Divider, InputNumber, Radio, Switch } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio/interface';
 
 import { useProTableTheme } from '@/models/theme';
-import { CollapsePanel, PanelLayout, ColorPanel } from '@/components';
+import { CollapsePanel, PanelLayout, ColorPanel } from '@/core/components';
 
 import { useGlobalStyle } from './state';
 

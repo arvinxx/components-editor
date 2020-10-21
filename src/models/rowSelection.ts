@@ -1,5 +1,5 @@
 import { TableRowSelection } from 'antd/es/table/interface';
-import { createStore, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 /**
  * Row Selection 状态

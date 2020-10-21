@@ -1,5 +1,5 @@
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
-import { createStore, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 /**
  * ProTable 的简单配置项

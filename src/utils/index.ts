@@ -93,10 +93,10 @@ export const isEnum = (type: ColumnType['valueType']) => {
 };
 /**
  * 判断是否是元组类数据
- * @param type
+ * @param dataSourceType
  */
-export const isMockData = (type: ColumnType['valueType']) => {
-  return dataSourceType==='';
+export const isMockData = (dataSourceType: string) => {
+  return dataSourceType === '';
 };
 
 /**

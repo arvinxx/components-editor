@@ -1,6 +1,6 @@
 import { TablePaginationConfig } from 'antd/es/table';
 
-import { createStore, PROTABLE_NAMESPACE } from './utils';
+import { createStore, PROTABLE_NAMESPACE } from '@/core/model';
 
 /**
  * Pagination 状态

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Input, Switch } from 'antd';
-import { CollapsePanel, PanelLayout } from '@/components';
+import { CollapsePanel, PanelLayout } from '@/core/components';
 import { useProTableSearch } from '@/models/search';
 
 const SearchConfig: FC = () => {

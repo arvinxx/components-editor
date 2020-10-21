@@ -19,11 +19,11 @@ import { useProTableDataSource } from '@/models/dataSource';
 import { useProTableColumn } from '@/models/columns';
 import { useProTableRowSelection } from '@/models/rowSelection';
 import { useProTableToolBar } from '@/models/toolbar';
-import { DataPreviewPanel, DragAndDrop } from '@/components';
+import { DataPreviewPanel, DragAndDrop } from '@/core/components';
 import TableHeader from './TableHeader';
 import styles from './style.less';
 
-const ProTablePage: FC = () => {
+const ProTableInstance: FC = () => {
   const actionRef = useRef<ActionType>();
 
   const [tableSize, setRef] = useSize<HTMLDivElement>();
@@ -349,4 +349,5 @@ const ProTablePage: FC = () => {
   );
 };
 
-export default ProTablePage;
+ProTableInstance.displayName = 'ProTable';
+export default ProTableInstance;
