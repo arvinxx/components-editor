@@ -16,11 +16,7 @@ export interface PluginInstance<S = {}> {
   /**
    * 根据 State 中的 key 对 config 配置项进行控制的方法
    */
-  stateMap?: {
-    key: string;
-    default: any;
-    method: any;
-  };
+  propList?: PropConfig[];
   /**
    * 开启插件面板的选择器
    */
@@ -35,6 +31,45 @@ export interface PluginInstance<S = {}> {
    * 编辑器面板会识别这个 token ,从而显示包含 token 的插件面板
    */
   renderToken: GlobalToken | string;
+}
+
+interface PropConfig {
+  /**
+   * 在 props 中的字段名
+   */
+  key: string;
+  type: 'enum' | 'number' | 'string';
+  /**
+   * 显示在编辑器的配置项名称
+   */
+  name?: string;
+  /**
+   * 是否需要对配置项进行进一步说明
+   */
+  note?: string;
+  /**
+   * 相关说明的URL链接
+   */
+  refURL?: string;
+  /**˚
+   * 保存在编辑器中的字段名
+   *
+   * 默认的话和 props 的一致
+   */
+  stateKey?: string;
+  /**
+   * 这个配置项的默认值
+   */
+  defaultValue?: any;
+  /**
+   * 当联动 prop 的状态值改变时 如何对参数的 props 进行修改
+   */
+  handleProp?: (state: any) => any;
+  enum?: EnumType[];
+}
+interface EnumType {
+  key: string;
+  value: string;
 }
 
 type GlobalToken = 'global';
